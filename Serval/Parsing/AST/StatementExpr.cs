@@ -1,4 +1,4 @@
-﻿namespace LangTest.Parsing.AST
+﻿namespace Serval.Parsing.AST
 {
     public abstract class StatementExpr : Expression
     {

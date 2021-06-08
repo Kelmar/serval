@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Diagnostics;
 
-namespace LangTest.Parsing.AST
+namespace Serval.Parsing.AST
 {
     public class TypeExpr : Expression
     {

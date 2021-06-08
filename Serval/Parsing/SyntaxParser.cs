@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
-using LangTest.Parsing.AST;
+using Serval.Parsing.AST;
 
-namespace LangTest
+namespace Serval
 {
     public class SyntaxParser : IDisposable
     {

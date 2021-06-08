@@ -1,0 +1,7 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs/Serval/v16
+/Serval/bin/Debug/netcoreapp3.1
+/Serval/obj

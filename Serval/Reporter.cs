@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace LangTest
+namespace Serval
 {
     public class Reporter : IReporter
     {

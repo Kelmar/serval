@@ -1,4 +1,4 @@
-﻿namespace LangTest.Parsing.AST
+﻿namespace Serval.Parsing.AST
 {
     class CastExpr : Expression
     {
