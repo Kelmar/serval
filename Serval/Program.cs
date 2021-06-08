@@ -12,7 +12,7 @@ namespace Serval
             var s = File.OpenRead("test.foo");
             var lex = new Lexer(s, rep);
 
-            var parser = new SyntaxParser(lex, rep);
+            var parser = new Parser(lex, rep);
 
             parser.BuildTree();
 
