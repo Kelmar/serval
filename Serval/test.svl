@@ -1,0 +1,7 @@
+﻿int foo;
+int bar;
+int baz;
+
+foo = 5;
+bar = (string)(int)(0x20 + -foo * !(5.5 + 10.6e4));
+baz = bar << 5 + 10;
