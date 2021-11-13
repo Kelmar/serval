@@ -3,13 +3,21 @@
     public class Token
     {
         public Token(string literal, TokenType type, int lineNumber)
+            : this(literal, literal, type, lineNumber)
+        {
+        }
+
+        public Token(string literal, string parsed, TokenType type, int lineNumber)
         {
             Literal = literal;
+            Parsed = parsed;
             Type = type;
             LineNumber = lineNumber;
         }
 
         public string Literal { get; }
+
+        public string Parsed { get; }
 
         public TokenType Type { get; }
 

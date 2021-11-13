@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
 
+using LLVMSharp;
+
 namespace Serval
 {
     class Program
