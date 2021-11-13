@@ -62,7 +62,7 @@ namespace LangTest
         {
             // Recover to simicolon
 
-            while (m_lex.Current.Type != (TokenType)';' && m_lex.MoveNext())
+            while (m_lex.Current.Type != TokenType.EndOfFile && m_lex.Current.Type != (TokenType)';' && m_lex.MoveNext())
                 ;
 
             if (m_lex.Current.Type == (TokenType)';')
