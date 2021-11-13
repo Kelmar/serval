@@ -6,9 +6,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Update="test.foo">
+    <None Remove="test.svl" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="test.svl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+    </Content>
   </ItemGroup>
 
 </Project>

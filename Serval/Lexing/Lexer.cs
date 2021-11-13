@@ -120,9 +120,9 @@ namespace Serval
 
         private void EatWhiteSpace() => ReadWhile(Char.IsWhiteSpace, true);
 
-        private Token ReadSingleToken()
+        private Token ReadTokenInner()
         {
-            if (m_input.EndOfStream && m_linePos >= m_line.Length)
+            if (m_input.EndOfStream && (m_line == null || m_linePos >= m_line.Length))
                 return new Token("", TokenType.EndOfFile, m_lineNumber);
 
             EatWhiteSpace();
@@ -135,41 +135,73 @@ namespace Serval
                         return null;
                 }
 
-                switch (CurrentChar)
+                if (CurrentChar != '\0')
                 {
-                case '\0':
-                    break;
+                    if (Char.IsDigit(CurrentChar))
+                        return ReadNumber();
 
-                // Hex starts with 0, numbers cannot start with _
-                case '0': 
-                case '1':
-                case '2':
-                case '3':
-                case '4':
-                case '5':
-                case '6':
-                case '7':
-                case '8':
-                case '9':
-                    return ReadNumber();
-
-                //case '\'':
-                //    break;
-
-                //case '$':
-                //case '`':
-                //case '"':
-                //    break;
-
-                default:
                     if (Char.IsLetter(CurrentChar))
                         return ReadKeywordOrIdentifier();
+
+                    if (CurrentChar == '$' || CurrentChar == '"' || CurrentChar == '\'')
+                        return ReadString();
 
                     return ReadSymbol();
                 }
             }
 
             return null;
+        }
+
+        private Token ReadSingleToken()
+        {
+            bool inBlockComment = false;
+
+            for (;;)
+            {
+                if (inBlockComment)
+                {
+                    int idx = m_line.IndexOf("*/");
+
+                    if (idx == -1)
+                    {
+                        if (!ReadLine())
+                        {
+                            // Reached end of file.
+                            m_reporter.Error(m_lineNumber, "Unexpected end of file, expected end of comment.");
+                            return null;
+                        }
+                    }
+                    else
+                    {
+                        m_linePos = idx + 2;
+                        inBlockComment = false;
+                    }
+                }
+                else
+                {
+                    Token rval = ReadTokenInner();
+
+                    if (rval == null)
+                        return null;
+
+                    if (rval.Type == TokenType.CommentStart)
+                    {
+                        inBlockComment = true;
+                        continue;
+                    }
+
+                    if (rval.Type == TokenType.EolComment)
+                    {
+                        if (!ReadLine())
+                            return null; // End of file
+
+                        continue;
+                    }
+
+                    return rval;
+                }
+            }
         }
 
         public bool MoveNext()

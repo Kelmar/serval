@@ -9,12 +9,12 @@ namespace Serval
         {
             var rep = new Reporter();
 
-            var s = File.OpenRead("test.foo");
-            var lex = new Lexer(s, rep);
+            using var s = File.OpenRead("test.svl");
+            using var lex = new Lexer(s, rep);
 
             var parser = new Parser(lex, rep);
 
-            parser.BuildTree();
+            _ = parser.BuildTree();
 
             Console.WriteLine("Errors: {0}, Warnings: {1}", rep.ErrorCount, rep.WarnCount);
         }

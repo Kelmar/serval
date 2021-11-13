@@ -139,6 +139,18 @@
                         type = TokenType.MulAssign;
                         ++m_linePos;
                     }
+                    else if (CurrentChar == '/')
+                    {
+                        /**
+                         * This is really just a place holder; we have to scan for the end of a block comment differently.
+                         * E.g. The following is a legitamit comment, which would break with using this symbol parser.
+                         */
+                        // /* **/
+                        
+                        literal = "*/";
+                        type = TokenType.CommentEnd;
+                        ++m_linePos;
+                    }
                     break;
 
                 case "/":
@@ -146,6 +158,18 @@
                     {
                         literal = "/=";
                         type = TokenType.DivAssign;
+                        ++m_linePos;
+                    }
+                    else if (CurrentChar == '/')
+                    {
+                        literal = "//";
+                        type = TokenType.EolComment;
+                        ++m_linePos;
+                    }
+                    else if (CurrentChar == '*')
+                    {
+                        literal = "/*";
+                        type = TokenType.CommentStart;
                         ++m_linePos;
                     }
                     break;
