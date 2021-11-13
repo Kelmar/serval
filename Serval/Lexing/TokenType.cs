@@ -3,7 +3,8 @@
     public enum TokenType
     {
         // Single character literals all occur in areas less than 256  (ASCII)
-        EndOfFile       = 0x0000_00_05,
+
+        EndOfFile       = 0x0000_00_05, // The lexer uses this as an end of stream token to the parser.
 
         // Basic types
         Identifier      = 0x0000_01_00,

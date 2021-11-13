@@ -103,7 +103,8 @@ namespace Serval
 
             if (cnt == 0 || cnt == 1)
             {
-                // Throw error here.
+                Error("Invalid hexidecimal escape string.");
+                return (null, '\0');
             }
 
             if (cnt == 3)
@@ -126,7 +127,8 @@ namespace Serval
             {
                 if (m_linePos >= m_line.Length)
                 {
-                    // Throw an error
+                    Error("Start of escape character encountered at end of line.");
+                    return (null, '\0');
                 }
 
                 if (literalEscapes.Contains(CurrentChar))
@@ -147,6 +149,10 @@ namespace Serval
                 {
                     // Hex escaped character (2 or 4 digits)
                     (string hex, int val) = ReadStringHex();
+
+                    if (hex == null)
+                        return (null, '\0');
+
                     literal += hex;
 
                     if (hex.Length == 2)
@@ -172,7 +178,8 @@ namespace Serval
                     }
                     else
                     {
-                        // Throw an error
+                        Error("Unknown escape character '{0}'", CurrentChar);
+                        return (null, '\0');
                     }
                 }
             }
@@ -193,13 +200,17 @@ namespace Serval
             {
                 (string p, char c) = ReadSingleChar();
 
+                if (p == null)
+                    return null;
+
                 literal.Append(p);
                 parsed.Append(c);
             }
 
             if (CurrentChar != '"')
             {
-                // Throw error, expected end of string literal.
+                Error("Unexpected '{0}' character, expecting \"", CurrentChar);
+                return null;
             }
 
             literal.Append('"');
@@ -215,11 +226,15 @@ namespace Serval
 
             (string parsed, char c) = ReadSingleChar();
 
+            if (parsed == null)
+                return null;
+
             literal += parsed;
 
             if (CurrentChar != '\'')
             {
-                // Throw error, expected end of character literal.
+                Error("Unexpected '{0}' character, expecting '", CurrentChar);
+                return null;
             }
 
             literal += "'";

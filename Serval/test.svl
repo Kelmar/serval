@@ -17,5 +17,6 @@ baz = bar << 5 + 10;
 
 baz = foo + /* block */ bar;
 
-string cat = "This is a test \x20 \x0020 \0 \r\n";
+string cat;
+cat = "This is a test -\x20- -\x0020- -\0- \r\n";
 
