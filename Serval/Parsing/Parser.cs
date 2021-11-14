@@ -116,7 +116,7 @@ namespace Serval
             case TokenType.Identifier:
                 if (m_symbolTab.TryGetValue(m_lex.Current.Literal, out DeclarationExpr decl))
                 {
-                    rval = new PrimaryExpr(m_lex.Current, decl.Type);
+                    rval = new VariableExpr(m_lex.Current, decl);
                 }
                 else
                 {
@@ -129,8 +129,7 @@ namespace Serval
             case TokenType.FloatConst:            
             case TokenType.IntConst:
             case TokenType.StringConst:
-                var type = new TypeExpr(m_lex.Current);
-                rval = new PrimaryExpr(m_lex.Current, type);
+                rval = new ConstExpr(m_lex.Current);
                 break;
 
             case (TokenType)'(':
@@ -391,6 +390,12 @@ namespace Serval
                 rval = ParseDeclaration();
             }
 
+            if (rval == null)
+            {
+                Error(m_lex.Current, "Confused");
+                return null;
+            }
+
             if (rval != null && m_lex.Current.Type != TokenType.Simicolon)
             {
                 Error(m_lex.Current, "Unexpected {0} token", m_lex.Current);
@@ -403,19 +408,15 @@ namespace Serval
             return rval;
         }
 
-        public Expression BuildTree()
+        public IEnumerable<Expression> BuildTree()
         {
             while (m_lex.Current.Type != TokenType.EndOfFile)
             {
                 Expression expr = ParseStatement();
 
                 if (expr != null)
-                {
-                    Console.WriteLine("{0}", expr);
-                }
+                    yield return expr;
             }
-
-            return null;
         }
     }
 }

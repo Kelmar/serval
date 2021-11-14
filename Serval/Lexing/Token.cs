@@ -7,7 +7,7 @@
         {
         }
 
-        public Token(string literal, string parsed, TokenType type, int lineNumber)
+        public Token(string literal, object parsed, TokenType type, int lineNumber)
         {
             Literal = literal;
             Parsed = parsed;
@@ -17,7 +17,7 @@
 
         public string Literal { get; }
 
-        public string Parsed { get; }
+        public object Parsed { get; }
 
         public TokenType Type { get; }
 
