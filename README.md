@@ -1,6 +1,7 @@
 This is currently an experiamental language that I'm developing.  That may change in the future.
 
-# Language Goals
+# Goals
+## Language
 * C/C++/C# like syntax
 * Easy to interface with hardware at a low level (OS/Driver Development)
   * Pointers & Refrences
@@ -15,36 +16,13 @@ This is currently an experiamental language that I'm developing.  That may chang
 * Strongly typed
 * Const correctness like C++ (readonly objects checked at compile time)
 * Operator overloading
+* Async programming (user space threads (i.e. C# tasks))
 
-# Standard Library Goals
+## Standard Library
 * Common collection library (lists, maps, arrays, etc. with common interface.)
+* Thread constructs
+
+# Syntax
 
 At the moment the syntax has not be solidified for anything.  It will be C/C++ like, but may include
 some useful constructs from other languages such as Ruby, TypeScript, or D.
-
-```c++
-class Foo : Bar
-{
-public:
-    Foo()
-    {
-        // Constructor
-    }
-    
-    ~Foo()
-    {
-        // Destructor
-    }
-    
-    void DoThing()
-    {
-        / Doing thing
-    }
-}
-
-int main(void)
-{
-    Foo f();
-    f.DoThing();
-}
-```
