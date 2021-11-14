@@ -1,4 +1,6 @@
-﻿namespace Serval
+﻿using Serval.Lexing;
+
+namespace Serval
 {
     public interface IReporter
     {

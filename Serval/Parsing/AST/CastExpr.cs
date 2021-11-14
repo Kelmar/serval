@@ -1,4 +1,6 @@
-﻿namespace Serval.Parsing.AST
+﻿using Serval.Lexing;
+
+namespace Serval.Parsing.AST
 {
     class CastExpr : Expression
     {

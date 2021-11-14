@@ -1,7 +1,8 @@
 ﻿using System;
 using System.IO;
 
-using LLVMSharp;
+using Serval.Fault;
+using Serval.Lexing;
 
 namespace Serval
 {
@@ -16,9 +17,12 @@ namespace Serval
 
             var parser = new Parser(lex, rep);
 
-            _ = parser.BuildTree();
+            var tree = parser.BuildTree();
 
             Console.WriteLine("Errors: {0}, Warnings: {1}", rep.ErrorCount, rep.WarnCount);
+
+            // By this point we should have a correct program
+
         }
 
         static void Main(string[] args)
@@ -26,6 +30,10 @@ namespace Serval
             try
             {
                 Test1();
+            }
+            catch (CompilerBugException ex)
+            {
+                Console.WriteLine("COMPILER BUG!\r\n{0}", ex);
             }
             catch (Exception ex)
             {

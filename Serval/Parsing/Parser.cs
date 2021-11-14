@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
+using Serval.Lexing;
 using Serval.Parsing.AST;
 
 namespace Serval
@@ -24,7 +25,7 @@ namespace Serval
         private readonly Lexer m_lex;
         private readonly IReporter m_reporter;
 
-        private readonly ISet<string> m_symbolTab = new HashSet<string>();
+        private readonly IDictionary<string, DeclarationExpr> m_symbolTab = new Dictionary<string, DeclarationExpr>();
 
         public Parser(Lexer lex, IReporter reporter)
         {
@@ -113,19 +114,23 @@ namespace Serval
             switch (m_lex.Current.Type)
             {
             case TokenType.Identifier:
-                if (!m_symbolTab.Contains(m_lex.Current.Literal))
+                if (m_symbolTab.TryGetValue(m_lex.Current.Literal, out DeclarationExpr decl))
+                {
+                    rval = new PrimaryExpr(m_lex.Current, decl.Type);
+                }
+                else
                 {
                     rval = null;
                     Error(m_lex.Current, "Undeclared identifier '{0}'", m_lex.Current.Literal);
                 }
-                else
-                    rval = new PrimaryExpr(m_lex.Current);
 
                 break;
 
             case TokenType.FloatConst:            
             case TokenType.IntConst:
-                rval = new PrimaryExpr(m_lex.Current);
+            case TokenType.StringConst:
+                var type = new TypeExpr(m_lex.Current);
+                rval = new PrimaryExpr(m_lex.Current, type);
                 break;
 
             case (TokenType)'(':
@@ -134,7 +139,7 @@ namespace Serval
 
                 if (m_lex.Current.Literal != ")")
                 {
-                    Error(m_lex.Current, "Expecting ')' on line {1}");
+                    Error(m_lex.Current, "Expecting ')' on line {0}", m_lex.Current.LineNumber);
                     return null;
                 }
 
@@ -322,7 +327,7 @@ namespace Serval
 
             Token ident = m_lex.Current;
 
-            if (!m_symbolTab.Contains(ident?.Literal))
+            if (!m_symbolTab.ContainsKey(ident?.Literal))
             {
                 Error(m_lex.Current, "Undefined identifier {0}", ident.Literal);
                 ErrorRecover();
@@ -354,29 +359,16 @@ namespace Serval
         {
             var type = ParseType();
 
-            //for (;;)
-            //{
-                if (m_lex.Current.Type != TokenType.Identifier)
-                {
-                    Error(m_lex.Current, "Expected identifier");
-                    return null;
-                }
+            if (m_lex.Current.Type != TokenType.Identifier)
+            {
+                Error(m_lex.Current, "Expected identifier");
+                return null;
+            }
 
-                m_symbolTab.Add(m_lex.Current.Literal);
+            var rval = new DeclarationExpr(type, m_lex.Current);
+            m_lex.MoveNext();
 
-                var rval = new DeclarationExpr(type, m_lex.Current);
-                m_lex.MoveNext();
-
-                //if (m_lex.Current.Type == TokenType.Simicolon)
-                //    break;
-
-                //if (m_lex.Current.Type != TokenType.Comma)
-                //{
-                //    Error("Expected comma or simicolon in declaration on line {0}", m_lex.Current.LineNumber);
-                //    ErrorRecover();
-                //    return null;
-                //}
-            //}
+            m_symbolTab.Add(rval.Identifier.Literal, rval);
 
             return rval;
         }

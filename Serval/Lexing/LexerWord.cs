@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Serval
+namespace Serval.Lexing
 {
     public partial class Lexer
     {

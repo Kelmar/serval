@@ -5,7 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 
-namespace Serval
+namespace Serval.Lexing
 {    
     public partial class Lexer : IDisposable, IEnumerator<Token>
     {

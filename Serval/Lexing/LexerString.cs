@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Text;
 
-namespace Serval
+namespace Serval.Lexing
 {
     /*
      * Parses out strings and characters.  This allows for escaped characters that are similar to the C# rules.
