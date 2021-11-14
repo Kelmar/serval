@@ -26,20 +26,20 @@ some useful constructs from other languages such as Ruby, TypeScript, or D.
 class Foo : Bar
 {
 public:
-	Foo()
-	{
-		// Constructor
-	}
-
-	~Foo()
-	{
-		// Destructor
-	}
-
-	void DoThing()
-	{
-		// Doing thing
-	}
+    Foo()
+    {
+        // Constructor
+    }
+    
+    ~Foo()
+    {
+        // Destructor
+    }
+    
+    void DoThing()
+    {
+        / Doing thing
+    }
 }
 
 int main(void)
