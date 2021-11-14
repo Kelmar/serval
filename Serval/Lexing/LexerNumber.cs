@@ -127,7 +127,7 @@ namespace Serval.Lexing
                 // Take each part and calculate the value.  There's probably a better way to do this. -- B.Simonds (Nov 13, 2021)
                 double res = @decimal;
 
-                res /= @decimal == 0 ? 1 : (Math.Log10(@decimal) + 1);
+                res /= Math.Pow(10, @decimal == 0 ? 1 : (Math.Log10(@decimal) + 1));
                 res += whole;
                 res *= Math.Pow(10, exp);
 
