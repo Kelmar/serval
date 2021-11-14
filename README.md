@@ -3,8 +3,8 @@ This is currently an experiamental language that I'm developing.  That may chang
 # Language Goals
 * C/C++/C# like syntax
 * Easy to interface with hardware at a low level (OS/Driver Development)
-** Pointers & Refrences
-** Pointer arithmatic
+  * Pointers & Refrences
+  * Pointer arithmatic
 * Easy to interface with C/C++ (Not sure how yet)
 * Stack based objects
 * Reflection
@@ -44,7 +44,7 @@ public:
 
 int main(void)
 {
-	Foo f();
-	f.DoThing();
+    Foo f();
+    f.DoThing();
 }
 ```
