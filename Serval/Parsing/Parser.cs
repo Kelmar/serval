@@ -351,7 +351,6 @@ namespace Serval
 
         /// <summary>
         /// declaration: [type] [ident]
-        ///            | [modifier] [type] [ident]
         /// </summary>
         /// <returns></returns>
         private Expression ParseDeclaration()

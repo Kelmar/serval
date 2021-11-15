@@ -43,6 +43,12 @@ identifier = letter | "_", { letter | digit | "_" };
 base_type = "int" | "float" | "string";
 type_modifier = "const";
 
+constant = char_const
+         | string_const
+         | int_const
+         | float_const
+         ;
+
 statement = assignment, ";"
           | declaration, ";"
           ;
