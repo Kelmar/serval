@@ -1,0 +1,65 @@
+Random notes and thoughts are going in here for now.
+
+At present I'm thinking of making the language predominantly reference based similar to C#, with structs performing
+much the same role as being value types that don't get passed by reference by default.  However I think that structs
+need to be simple containers of elements and nothing more.  They can have operators that work with them, but they
+should not have inhertiance like classes will.
+
+[Packed]
+[Layout(Sequential)]
+struct Foo
+{
+    // All items public by default.
+
+    int Bar : 3; // 3 bit integer
+    int Baz; // Regular 32 bit integer
+
+    /*
+     * Not sure it make sense to make properties for structs, keeping with the theme that they are just 
+     * data containers.
+     */
+
+    Foo operator =(in Foo f)
+    {
+        // Copy operator
+        // Do we have a notion of an implicit "this" pointer with structs like C++/C#?
+    }
+
+private: // C++ like sections?
+    int Moof;
+}
+
+// Single inheritance multi interfaces like C#
+class Sprocket : Widget
+{
+    // All items public by default?
+
+public:
+    int Bar { get; set; } // Properties
+
+private:
+}
+
+Some thoughts:
+var foo = new Foo(); // Object allocated and tracked by GC
+var bar = alloc Bar(); // Object allocated, but not tracked by GC (unsafe only?)
+delete bar; // Explicitly release bar (can be either GCed or not)
+
+scoped var baz = new Baz(); // Auto deleted once out of scope
+
+// Generics:
+class List<T> : IContainer<T>
+{
+
+}
+
+// Varidic generics
+class Cog<TArgs...>
+{
+    public void DoThing(TArgs... args)
+    {
+        // Treat as array?
+        var i = args[0]; // Typed to that argument.
+
+    }
+}

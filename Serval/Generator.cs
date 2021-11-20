@@ -47,7 +47,7 @@ namespace Serval
 
         public void Generate(List<Expression> astList)
         {
-            Debug.Assert(astList != null, "Got NULL in AST!?");
+            Debug.Assert(astList != null, "Got NULL AST list!?");
 
             foreach (var ast in astList)
             {

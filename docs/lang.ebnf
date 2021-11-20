@@ -8,7 +8,8 @@ digit = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9";
 
 oct_digit = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7";
 
-hex_digit = digit | "A" | "B" | "C" | "D" | "E" | "F";
+hex_digit = digit | "A" | "B" | "C" | "D" | "E" | "F" |
+                    "a" | "b" | "c" | "d" | "e" | "f";
 
 letter = "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I" |
          "J" | "K" | "L" | "M" | "N" | "O" | "P" | "Q" | "R" | 
@@ -27,8 +28,8 @@ float_const = int_const, ".", int_const, "e" | "E", int_const;
 printable_char = ? all printable chararcters except "\\" ?
 
 literal_escape = "\\", "\\" | "\"" | "\'";
-control_escape = "\\", "a" | "b" | "f" | "n" | "r" | "t" | "v" |
-                       "A" | "B" | "F" | "N" | "R" | "T" | "V";
+control_escape = "\\", "A" | "B" | "F" | "N" | "R" | "T" | "V" |
+                       "a" | "b" | "f" | "n" | "r" | "t" | "v";
 octal_escape = "\\0", [ oct_digit, [ oct_digit ] ];
 hex_escape = "\\x" | "\\X", hex_digit, hex_digit, [ hex_digit, hex_digit ];
 
