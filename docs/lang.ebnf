@@ -1,0 +1,111 @@
+(*
+ * Basic language definition for the Serval programming langugage
+ *
+ * Loose EBNF grammar for the language.
+ *)
+
+digit = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9";
+
+oct_digit = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7";
+
+hex_digit = digit | "A" | "B" | "C" | "D" | "E" | "F" |
+                    "a" | "b" | "c" | "d" | "e" | "f";
+
+letter = "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I" |
+         "J" | "K" | "L" | "M" | "N" | "O" | "P" | "Q" | "R" | 
+         "S" | "T" | "U" | "V" | "W" | "X" | "Y" | "Z" |
+         "a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" | "i" |
+         "j" | "k" | "l" | "m" | "n" | "o" | "p" | "q" | "r" | 
+         "s" | "t" | "u" | "v" | "w" | "x" | "y" | "z";
+
+# We use _ as a seperator character for numeric values like C# does.
+hex_const = "0x" | "0X", hex_digit, { hex_digit | "_" };
+
+int_const = digit, { digit | "_" };
+
+float_const = int_const, ".", int_const, "e" | "E", int_const;
+
+printable_char = ? all printable chararcters except "\\" ?
+
+literal_escape = "\\", "\\" | "\"" | "\'";
+control_escape = "\\", "A" | "B" | "F" | "N" | "R" | "T" | "V" |
+                       "a" | "b" | "f" | "n" | "r" | "t" | "v";
+octal_escape = "\\0", [ oct_digit, [ oct_digit ] ];
+hex_escape = "\\x" | "\\X", hex_digit, hex_digit, [ hex_digit, hex_digit ];
+
+char_code = literal_escape | control_escape | octal_escape | hex_escape | printable_char;
+
+char_const = "'", char_code, "'"
+
+string_const = "\"", { char_code }, "\""
+
+identifier = letter | "_", { letter | digit | "_" };
+
+base_type = "int" | "float" | "string";
+type_modifier = "const";
+
+constant = char_const
+         | string_const
+         | int_const
+         | float_const
+         ;
+
+statement = assignment, ";"
+          | declaration, ";"
+          ;
+
+declaration = type, identifier
+            ;
+
+assignment = identifier, "=", expression;
+
+expression = equality;
+
+equality = equality, "==", relational
+         | equality, "!=", relational
+         ;
+
+relational = shift
+           | relational, "<", shift
+           | relational, ">", shift
+           | relational, "<=", shift
+           | relational, ">=", shift
+           ;
+
+shift = additive
+      | shift, "<<", additive
+      | shift, ">>", additive
+      ;
+
+additive = factor
+         | additive, "+", factor
+         | additive, "/", factor
+         ;
+
+factor = uniary
+       | term, "*", uniary
+       | term, "/", uniary
+       | term, "%", uniary
+       ;
+
+cast = uniary
+     | "(", type, ")", cast
+     ;
+
+uniary = primary
+       | "+", primary
+       | "-", primary
+       | "*", primary
+       | "&", primary
+       | "~", primary
+       | "!", primary
+       ;
+
+primary = identifier
+        | constant
+        | "(", expression, ")"
+        ;
+
+type = base_type
+     | type_modifier, { type_modifer }, base_type
+     ;

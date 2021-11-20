@@ -5,10 +5,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 
-namespace Serval
-{
-    public delegate void ErrorHandler(string format, params object[] args);
-    
+namespace Serval.Lexing
+{    
     public partial class Lexer : IDisposable, IEnumerator<Token>
     {
         private readonly StreamReader m_input;
@@ -143,8 +141,12 @@ namespace Serval
                     if (Char.IsLetter(CurrentChar))
                         return ReadKeywordOrIdentifier();
 
-                    if (CurrentChar == '$' || CurrentChar == '"' || CurrentChar == '\'')
+                    //if (CurrentChar == '$' || CurrentChar == '"')
+                    if (CurrentChar == '"')
                         return ReadString();
+
+                    if (CurrentChar == '\'')
+                        return ReadChar();
 
                     return ReadSymbol();
                 }

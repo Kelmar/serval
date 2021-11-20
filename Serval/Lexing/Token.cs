@@ -1,15 +1,23 @@
-﻿namespace Serval
+﻿namespace Serval.Lexing
 {
     public class Token
     {
         public Token(string literal, TokenType type, int lineNumber)
+            : this(literal, literal, type, lineNumber)
+        {
+        }
+
+        public Token(string literal, object parsed, TokenType type, int lineNumber)
         {
             Literal = literal;
+            Parsed = parsed;
             Type = type;
             LineNumber = lineNumber;
         }
 
         public string Literal { get; }
+
+        public object Parsed { get; }
 
         public TokenType Type { get; }
 

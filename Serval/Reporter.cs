@@ -1,5 +1,7 @@
 ﻿using System;
 
+using Serval.Lexing;
+
 namespace Serval
 {
     public class Reporter : IReporter
