@@ -22,7 +22,7 @@
                     else if (CurrentChar == '=')
                     {
                         literal = "+=";
-                        type = TokenType.AddAsign;
+                        type = TokenType.AddAssign;
                         ++m_linePos;
                     }
                     break;

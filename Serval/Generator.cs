@@ -11,6 +11,7 @@ using Llvm.NET.Interop;
 using Llvm.NET.Instructions;
 using Llvm.NET.Values;
 using Llvm.NET.Types;
+using Serval.Lexing;
 
 //using static Llvm.NET.Interop.Library;
 
@@ -18,7 +19,7 @@ namespace Serval
 {
     public class Generator : IDisposable
     {
-        private readonly IDictionary<string, DeclarationExpr> m_symbolTable = new Dictionary<string, DeclarationExpr>();
+        private readonly IDictionary<string, GlobalVariable> m_symbolTable = new Dictionary<string, GlobalVariable>();
 
         private readonly IDisposable m_llvm;
 
@@ -96,16 +97,14 @@ namespace Serval
             return default;
         }
 
-        private Value GenerateAssignment(AssignmentStatement ast)
+        private Store GenerateAssignment(AssignmentStatement ast)
         {
             var body = Generate(ast.Body);
 
-            if (!m_symbolTable.TryGetValue(ast.Identifier.Literal, out var symbol))
+            if (!m_symbolTable.TryGetValue(ast.Identifier.Literal, out GlobalVariable symbol))
                 throw new CompilerBugException($"Undeclared variable {ast.Identifier.Literal} on line {ast.Identifier.LineNumber}");
 
-            return null;
-
-            //return m_builder.MemSet(symbol, body, default, false);
+            return m_builder.Store(body, symbol);
         }
 
         private Value GenerateBinaryExpr(BinaryExpr ast)
@@ -165,8 +164,18 @@ namespace Serval
 
         private Value GenerateDeclExpr(DeclarationExpr ast)
         {
-            //m_symbolTable.Add(ast.Identifier.Literal, ast);
-            //m_module.
+            ITypeRef type = ast.Type.Type.Type switch
+            {
+                TokenType.Int => m_context.Int32Type,
+                TokenType.Float => m_context.FloatType,
+                _ => null
+            };
+
+            if (type == null)
+                throw new NotImplementedException($"Unknown type {ast.Type.Type.Type}");
+
+            GlobalVariable variable = m_module.AddGlobal(type, ast.Identifier.Literal);
+            m_symbolTable.Add(ast.Identifier.Literal, variable);
 
             return default;
         }

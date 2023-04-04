@@ -1,19 +1,21 @@
-﻿using Serval.Lexing;
+﻿using System;
+
+using Serval.Lexing;
 
 namespace Serval.Parsing.AST
 {
     public class VariableExpr : Expression
     {
-        public VariableExpr(Token token, DeclarationExpr toDecl)
+        public VariableExpr(Token token, Symbol symbol)
         {
             Token = token;
-            ToDecl = toDecl;
+            Symbol = symbol;
         }
 
         public Token Token { get; }
 
-        public TypeExpr ResultType => ToDecl.Type;
+        public TypeExpr ResultType => throw new NotImplementedException();
 
-        public DeclarationExpr ToDecl { get; }
+        public Symbol Symbol { get; }
     }
 }

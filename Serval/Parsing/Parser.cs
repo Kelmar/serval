@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 using Serval.Lexing;
@@ -25,7 +26,7 @@ namespace Serval
         private readonly Lexer m_lex;
         private readonly IReporter m_reporter;
 
-        private readonly IDictionary<string, DeclarationExpr> m_symbolTab = new Dictionary<string, DeclarationExpr>();
+        private readonly SymbolTable m_symbolTab = new SymbolTable(); 
 
         public Parser(Lexer lex, IReporter reporter)
         {
@@ -114,10 +115,10 @@ namespace Serval
             switch (m_lex.Current.Type)
             {
             case TokenType.Identifier:
-                if (m_symbolTab.TryGetValue(m_lex.Current.Literal, out DeclarationExpr decl))
-                {
-                    rval = new VariableExpr(m_lex.Current, decl);
-                }
+                var symbol = m_symbolTab.FindEntry(m_lex.Current.Literal);
+
+                if (symbol != null)
+                    rval = new VariableExpr(m_lex.Current, symbol);
                 else
                 {
                     rval = null;
@@ -326,7 +327,14 @@ namespace Serval
 
             Token ident = m_lex.Current;
 
-            if (!m_symbolTab.ContainsKey(ident?.Literal))
+            if (ident == null)
+            {
+                throw new Exception("Not sure what's going on here, current token is null, end of file?");
+            }
+
+            Symbol symbol = m_symbolTab.FindEntry(ident.Literal);
+
+            if (symbol == null)
             {
                 Error(m_lex.Current, "Undefined identifier {0}", ident.Literal);
                 ErrorRecover();
@@ -366,7 +374,7 @@ namespace Serval
             var rval = new DeclarationExpr(type, m_lex.Current);
             m_lex.MoveNext();
 
-            m_symbolTab.Add(rval.Identifier.Literal, rval);
+            m_symbolTab.AddEntry(rval);
 
             return rval;
         }

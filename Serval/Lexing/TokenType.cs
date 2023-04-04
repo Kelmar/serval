@@ -67,7 +67,7 @@
         // Assignment symbols
         Assign          = '=',
 
-        AddAsign        = 0x0000_32_00, // +=
+        AddAssign       = 0x0000_32_00, // +=
         SubAssign       = 0x0000_32_01, // -=
         AndAssign       = 0x0000_32_02, // &=
         OrAssign        = 0x0000_32_03, // |=

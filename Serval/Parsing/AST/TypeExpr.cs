@@ -32,7 +32,7 @@ namespace Serval.Parsing.AST
             }
         }
 
-        Token Type { get; }
+        public Token Type { get; }
 
         public bool IsConstant { get; }
 
