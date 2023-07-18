@@ -2,17 +2,20 @@
 
 namespace Serval.Parsing.AST
 {
-    public class DeclarationExpr : Expression
+    public class VariableDecl : Expression
     {
-        public DeclarationExpr(TypeExpr type, Token ident)
+        public VariableDecl(TokenType modifier, TokenType type, Token ident)
         {
+            Modifier = modifier;
             Type = type;
             Identifier = ident;
         }
 
+        public TokenType Modifier { get; }
+
         public Token Identifier { get; }
 
-        public TypeExpr Type { get; }
+        public TokenType Type { get; }
 
         public override string ToString()
         {

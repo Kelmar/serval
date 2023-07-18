@@ -8,13 +8,13 @@ namespace Serval
 {
     public class Symbol
     {
-        public Symbol(DeclarationExpr decl)
+        public Symbol(VariableDecl decl)
         {
             Declaration = decl;
         }
 
         public string Name => Declaration.Identifier.Literal;
 
-        public DeclarationExpr Declaration { get; set; }
+        public VariableDecl Declaration { get; set; }
     }
 }

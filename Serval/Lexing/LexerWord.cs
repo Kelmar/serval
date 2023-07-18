@@ -14,8 +14,11 @@ namespace Serval.Lexing
             {
                 return new Token(word, word switch
                 {
+                    "_" => TokenType.Discard,
                     "for" => TokenType.For,
                     "int" => TokenType.Int,
+                    "var" => TokenType.Var,
+                    "char" => TokenType.Char,
                     "class" => TokenType.Class,
                     "const" => TokenType.Const,
                     "string" => TokenType.String,

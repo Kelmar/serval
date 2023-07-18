@@ -6,16 +6,13 @@ namespace Serval.Parsing.AST
 {
     public class VariableExpr : Expression
     {
-        public VariableExpr(Token token, Symbol symbol)
+        public VariableExpr(Token token)
         {
             Token = token;
-            Symbol = symbol;
         }
 
         public Token Token { get; }
 
-        public TypeExpr ResultType => throw new NotImplementedException();
-
-        public Symbol Symbol { get; }
+        //public TypeExpr ResultType => throw new NotImplementedException();
     }
 }

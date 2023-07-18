@@ -12,7 +12,7 @@ namespace Serval
     {
         private readonly IDictionary<string, Symbol> m_entries = new Dictionary<string, Symbol>();
 
-        public Symbol AddEntry(DeclarationExpr decl)
+        public Symbol AddEntry(VariableDecl decl)
         {
             if (m_entries.ContainsKey(decl.Identifier.Literal))
                 throw new CompileException(CompileErrors.SymbolRedefined, String.Empty, 0, null);
@@ -26,7 +26,10 @@ namespace Serval
 
         public Symbol FindEntry(string name)
         {
-            return m_entries[name];
+            if (m_entries.TryGetValue(name, out Symbol rval))
+                return rval;
+
+            return null;
         }
     }
 }

@@ -19,3 +19,80 @@ baz = foo + /* block */ bar;
 
 string cat;
 cat = "This is a test -\x20- -\x0020- -\0- \r\n";
+
+// New syntax?
+
+const foo : int = 0;
+var bar : string = "Hi";
+
+var baz = 1.0f; // Auto typed to float
+
+var r : range = 0..9; // Range type (inclusive)
+
+func doThing()
+{
+    // Enumeration iteration
+    for (var i in list)
+    {
+    }
+
+    // Standard for loop
+    for (var i = 0; i < 100; ++i)
+    {
+    }
+
+    // While loop
+    while (true)
+    {
+    }
+
+    // Do/While loop
+    do
+    {
+    } while (true);
+
+    // Value test
+    var i : int = b ? 0 : 1;
+}
+
+interface IGreeter
+{
+    func greet();
+}
+
+class Widget : Sprocket, IGreeter
+{
+private:
+    var m_member : int;
+    var m_callback : func (): string;
+
+    func greeting() : string
+    {
+        return "Hello, World!";
+    }
+
+public:
+    func init()
+    {
+        m_callback = greeting;
+    }
+
+    func greet()
+    {
+        print(m_callback());
+    }
+
+    var name : string
+    {
+        get
+        {
+            return "Bob";
+        }
+        set
+        {
+            m_name = value;
+        }
+    }
+}
+
+

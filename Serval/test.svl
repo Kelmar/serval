@@ -1,3 +1,5 @@
-﻿
-int foo;
+﻿const bar : int;
+var foo : int;
 foo = 5 + 5;
+
+doThing(foo, bar);
