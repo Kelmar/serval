@@ -15,8 +15,4 @@
     </Content>
   </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Llvm.NET" Version="8.0.1" />
-  </ItemGroup>
-
 </Project>

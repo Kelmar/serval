@@ -31,6 +31,7 @@
         Simicolon       = ';',
         LeftParen       = '(',
         RightParen      = ')',
+        Question        = '?',
 
         // Operator symbols (Groupped roughly by prec)
         LogicalNot      = '!', // Uniary
@@ -46,13 +47,12 @@
         Less            = '<',
         More            = '>',
 
-        And             = '&', // Also uniary (get pointer)
+        And             = '&',
 
         Xor             = '^',
 
         Or              = '|',
 
-        
         Increment       = 0x0000_22_00, // ++
         Decrement       = 0x0000_22_01, // --
         ShiftLeft       = 0x0000_22_02, // <<
@@ -67,7 +67,7 @@
         // Assignment symbols
         Assign          = '=',
 
-        AddAsign        = 0x0000_32_00, // +=
+        AddAssign       = 0x0000_32_00, // +=
         SubAssign       = 0x0000_32_01, // -=
         AndAssign       = 0x0000_32_02, // &=
         OrAssign        = 0x0000_32_03, // |=
@@ -75,9 +75,11 @@
         DivAssign       = 0x0000_32_05, // /=
         ModAssign       = 0x0000_32_06, // %=
         XorAssign       = 0x0000_32_07, // ^=
+        Range           = 0x0000_32_08, // ..
 
         LeftAssign      = 0x0000_33_00, // <<=
         RightAssign     = 0x0000_33_01, // >>=
+        SpaceShip       = 0x0000_33_02, // <=>
 
         // Comment symbols
         EolComment      = 0x0000_42_00, // //

@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 
+using Serval.CodeGen;
 using Serval.Fault;
 using Serval.Lexing;
 
@@ -18,18 +19,17 @@ namespace Serval
 
             using var parser = new Parser(lex, rep);
 
-            var tree = parser.BuildTree().ToList();
+            var module = parser.ParseModule();
+
+            // By this point we should have a correct program
 
             if (rep.ErrorCount == 0)
             {
                 using var gen = new Generator();
-                gen.Generate(tree);
+                gen.Generate(module);
             }
 
             Console.WriteLine("Errors: {0}, Warnings: {1}", rep.ErrorCount, rep.WarnCount);
-
-            // By this point we should have a correct program
-
         }
 
         static void Main(string[] args)

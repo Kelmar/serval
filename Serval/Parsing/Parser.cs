@@ -246,9 +246,9 @@ namespace Serval
 
         /// <summary>
         /// factor: uniary
-        ///       | term '*' uniary
-        ///       | term '/' uniary
-        ///       | term '%' uniary
+        ///       | factor '*' uniary
+        ///       | factor '/' uniary
+        ///       | factor '%' uniary
         /// </summary>
         /// <returns></returns>
         private Expression ParseFactor()
@@ -407,15 +407,19 @@ namespace Serval
             return rval;
         }
 
-        public IEnumerable<Expression> BuildTree()
+        public Module ParseModule()
         {
+            var rval = new Module();
+
             while (m_lex.Current.Type != TokenType.EndOfFile)
             {
                 Expression expr = ParseStatement();
 
                 if (expr != null)
-                    yield return expr;
+                    rval.Expressions.Add(expr);
             }
+
+            return rval;
         }
     }
 }

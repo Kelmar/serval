@@ -22,7 +22,7 @@
                     else if (CurrentChar == '=')
                     {
                         literal = "+=";
-                        type = TokenType.AddAsign;
+                        type = TokenType.AddAssign;
                         ++m_linePos;
                     }
                     break;
@@ -52,6 +52,7 @@
                         if (m_linePos < m_line.Length && CurrentChar == '=')
                         {
                             literal = "<<=";
+                            type = TokenType.LeftAssign;
                             ++m_linePos;
                         }
                     }
@@ -59,7 +60,14 @@
                     {
                         literal = "<=";
                         type = TokenType.LessEqual;
-                        break;
+                        ++m_linePos;
+
+                        if (CurrentChar == '>')
+                        {
+                            literal = "<=>";
+                            type = TokenType.SpaceShip;
+                            ++m_linePos;
+                        }
                     }
                     break;
 
@@ -73,6 +81,7 @@
                         if (m_linePos < m_line.Length && CurrentChar == '=')
                         {
                             literal = ">>=";
+                            type = TokenType.RightAssign;
                             ++m_linePos;
                         }
                     }
@@ -188,6 +197,15 @@
                     {
                         literal = "^=";
                         type = TokenType.XorAssign;
+                        ++m_linePos;
+                    }
+                    break;
+
+                case ".":
+                    if (CurrentChar == '.')
+                    {
+                        literal = "..";
+                        type = TokenType.Range;
                         ++m_linePos;
                     }
                     break;
