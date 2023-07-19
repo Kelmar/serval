@@ -10,7 +10,7 @@ namespace Serval.CodeGen
 {
     public class Generator : IDisposable
     {
-        private readonly IDictionary<string, DeclarationExpr> m_symbolTable = new Dictionary<string, DeclarationExpr>();
+        //private readonly IDictionary<string, DeclarationExpr> m_symbolTable = new Dictionary<string, DeclarationExpr>();
 
         public Generator()
         {

@@ -1,4 +1,6 @@
-﻿using Serval.Lexing;
+﻿using System;
+
+using Serval.Lexing;
 
 namespace Serval.Parsing.AST
 {
@@ -8,11 +10,18 @@ namespace Serval.Parsing.AST
         {
             Token = token;
 
-            ResultType = new TypeExpr(Token);
+            Type = token.Type switch
+            {
+                TokenType.CharConst => TokenType.Char,
+                TokenType.StringConst => TokenType.String,
+                TokenType.IntConst => TokenType.Int,
+                TokenType.FloatConst => TokenType.Float,
+                _ => throw new Exception($"Unknown constant type {token.Type}")
+            };
         }
 
         public Token Token { get; }
 
-        public TypeExpr ResultType { get; }
+        public TokenType Type { get; }
     }
 }

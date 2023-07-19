@@ -4,7 +4,7 @@
     {
         // Single character literals all occur in areas less than 256  (ASCII)
 
-        EndOfFile       = 0x0000_00_05, // The lexer uses this as an end of stream token to the parser.
+        EndOfFile       = 0x0000_00_00, // The lexer uses this as an end of stream token to the parser.
 
         // Basic types
         Identifier      = 0x0000_01_00,
@@ -12,10 +12,15 @@
         StringConst     = 0x0000_01_02,
         IntConst        = 0x0000_01_10, // 32-bit integer
         FloatConst      = 0x0000_01_20, // IEEE floating point
-        
+
         // Keywords
+        Discard         = 0x0000_11_00, // _
+
         For             = 0x0000_13_00,
         Int             = 0x0000_13_01,
+        Var             = 0x0000_13_02,
+
+        Char            = 0x0000_14_00,
 
         Class           = 0x0000_15_00,
         Const           = 0x0000_15_01,
@@ -25,6 +30,7 @@
         Struct          = 0x0000_16_01,
 
         // Misc symbols
+        At              = '@',
         Dot             = '.',
         Comma           = ',',
         Colon           = ':',
@@ -33,16 +39,16 @@
         RightParen      = ')',
         Question        = '?',
 
-        // Operator symbols (Groupped roughly by prec)
-        LogicalNot      = '!', // Uniary
-        Not             = '~', // Uniary
+        // Operator symbols (Grouped roughly by prec)
+        LogicalNot      = '!', // Unary
+        Not             = '~', // Unary
 
-        Mul             = '*', // Also uniary (pointer deref)
+        Mul             = '*', // Also unary (pointer deref)
         Div             = '/',
         Mod             = '%',
 
-        Add             = '+', // Also uniary
-        Sub             = '-', // Also uniary
+        Add             = '+', // Also unary
+        Sub             = '-', // Also unary
 
         Less            = '<',
         More            = '>',
