@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Serval.Fault;
+
+using System;
 using System.Linq;
 using System.Text;
 
@@ -15,12 +17,12 @@ namespace Serval.Lexing
      * \b      -- Backspace character
      * \f      -- Form feed
      * \n      -- New line
-     * \r      -- Carrage return
+     * \r      -- Carriage return
      * \t      -- Tab
      * \v      -- Vertical Tab
      * \000    -- Octal escaped ASCII character
-     * \x hh   -- Hexidecimal ASCII character
-     * \x hhhh -- Hexidecimal UTF-16 character
+     * \x hh   -- Hexadecimal ASCII character
+     * \x hhhh -- Hexadecimal UTF-16 character
      */
     public partial class Lexer
     {
@@ -91,7 +93,7 @@ namespace Serval.Lexing
 
             if (cnt == 0 || cnt == 1)
             {
-                Error("Invalid hexidecimal escape string.");
+                Error(ErrorCodes.LexBadHex);
                 return (null, '\0');
             }
 
@@ -115,7 +117,7 @@ namespace Serval.Lexing
             {
                 if (m_linePos >= m_line.Length)
                 {
-                    Error("Start of escape character encountered at end of line.");
+                    Error(ErrorCodes.LexHangingEscape);
                     return (null, '\0');
                 }
 
@@ -166,7 +168,7 @@ namespace Serval.Lexing
                     }
                     else
                     {
-                        Error("Unknown escape character '{0}'", CurrentChar);
+                        Error(ErrorCodes.LexUnknownEscape, CurrentChar);
                         return (null, '\0');
                     }
                 }
@@ -179,6 +181,7 @@ namespace Serval.Lexing
         {
             var literal = new StringBuilder();
             var parsed = new StringBuilder();
+            int start = m_linePos;
 
             literal.Append('"');
 
@@ -197,19 +200,24 @@ namespace Serval.Lexing
 
             if (CurrentChar != '"')
             {
-                Error("Unexpected '{0}' character, expecting \"", CurrentChar);
+                Error(ErrorCodes.LexExpectedEndOfString);
                 return null;
             }
 
             literal.Append('"');
             ++m_linePos; // Eat closing double quote
 
-            return new Token(literal.ToString(), parsed.ToString(), TokenType.StringConst, m_lineNumber);
+            return new Token(literal.ToString(), TokenType.StringConst, m_lineNumber, start, m_linePos)
+            {
+                Parsed = parsed.ToString()
+            };
         }
 
         private Token ReadChar()
         {
             string literal = "'";
+            int start = m_linePos;
+
             ++m_linePos; // Eat opening single quote
 
             (string parsed, char c) = ReadSingleChar();
@@ -221,14 +229,17 @@ namespace Serval.Lexing
 
             if (CurrentChar != '\'')
             {
-                Error("Unexpected '{0}' character, expecting '", CurrentChar);
+                Error(ErrorCodes.LexExpectedEndOfChar);
                 return null;
             }
 
             literal += "'";
             ++m_linePos; // Eat closing single quote
 
-            return new Token(literal, c.ToString(), TokenType.CharConst, m_lineNumber);
+            return new Token(literal, TokenType.CharConst, m_lineNumber, start, m_linePos)
+            {
+                Parsed = c.ToString() // TODO: Change to just char later.
+            };
         }
     }
 }

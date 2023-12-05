@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Serval.Fault;
+
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -45,18 +47,13 @@ namespace Serval.Lexing
 
         public Token LookAhead { get; private set; }
 
-        private Char CurrentChar => m_line != null && m_linePos < m_line.Length ? m_line[m_linePos] : '\0';
+        private char CurrentChar => m_line != null && m_linePos < m_line.Length ? m_line[m_linePos] : '\0';
 
         object IEnumerator.Current => throw new NotImplementedException();
 
-        private void Error(string fmt, params object[] args)
+        private void Error(ErrorCodes errorCode, params object[] args)
         {
-            m_reporter.Error(m_lineNumber, fmt, args);
-        }
-
-        private void Warn(string fmt, params object[] args)
-        {
-            m_reporter.Warn(m_lineNumber, fmt, args);
+            m_reporter.Error(m_lineNumber, errorCode, args);
         }
 
         private bool ReadLine()
@@ -121,7 +118,7 @@ namespace Serval.Lexing
         private Token ReadTokenInner()
         {
             if (m_input.EndOfStream && (m_line == null || m_linePos >= m_line.Length))
-                return new Token("", TokenType.EndOfFile, m_lineNumber);
+                return new Token(String.Empty, TokenType.EndOfFile, m_lineNumber, -1, -1);
 
             EatWhiteSpace();
 
@@ -148,7 +145,7 @@ namespace Serval.Lexing
                     if (CurrentChar == '\'')
                         return ReadChar();
 
-                    return ReadSymbol();
+                    return ReadSpecial();
                 }
             }
 
@@ -170,7 +167,7 @@ namespace Serval.Lexing
                         if (!ReadLine())
                         {
                             // Reached end of file.
-                            m_reporter.Error(m_lineNumber, "Unexpected end of file, expected end of comment.");
+                            Error(ErrorCodes.ParseUnexpectedEOF);
                             return null;
                         }
                     }

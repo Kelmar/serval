@@ -1,15 +1,14 @@
-﻿using Serval.Lexing;
+﻿using Serval.Fault;
+using Serval.Lexing;
 
 namespace Serval
 {
     public interface IReporter
     {
-        void Error(int lineNumber, string fmt, params object[] args);
+        int ErrorCount { get; }
 
-        void Error(Token t, string fmt, params object[] args);
+        void Error(int lineNumber, ErrorCodes errorCode, params object[] args);
 
-        void Warn(int lineNumber, string fmt, params object[] args);
-
-        void Warn(Token t, string fmt, params object[] args);
+        void Error(Token t, ErrorCodes errorCode, params object[] args);
     }
 }

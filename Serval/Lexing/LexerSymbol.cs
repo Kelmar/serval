@@ -2,10 +2,12 @@
 {
     public partial class Lexer
     {
-        private Token ReadSymbol()
+        private Token ReadSpecial()
         {
             string literal = CurrentChar.ToString();
             TokenType type = (TokenType)CurrentChar;
+            int start = m_linePos;
+
             ++m_linePos;
 
             if (m_linePos < m_line.Length)
@@ -28,18 +30,27 @@
                     break;
 
                 case "-":
-                    if (CurrentChar == '-')
+                    switch (CurrentChar)
                     {
+                    case '-':
                         literal = "--";
                         type = TokenType.Decrement;
                         ++m_linePos;
-                    }
-                    else if (CurrentChar == '=')
-                    {
+                        break;
+
+                    case '=':
                         literal = "-=";
                         type = TokenType.SubAssign;
                         ++m_linePos;
+                        break;
+
+                    case '>':
+                        literal = "->";
+                        type = TokenType.Arrow;
+                        ++m_linePos;
+                        break;
                     }
+                    
                     break;
 
                 case "<":
@@ -207,12 +218,19 @@
                         literal = "..";
                         type = TokenType.Range;
                         ++m_linePos;
+
+                        if (CurrentChar == '.')
+                        {
+                            literal = "...";
+                            type = TokenType.Spread;
+                            ++m_linePos;
+                        }
                     }
                     break;
                 }
             }
 
-            var rval = new Token(literal, type, m_lineNumber);
+            var rval = new Token(literal, type, m_lineNumber, start, m_linePos);
 
             return rval;
         }

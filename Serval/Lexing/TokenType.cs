@@ -4,7 +4,7 @@
     {
         // Single character literals all occur in areas less than 256  (ASCII)
 
-        EndOfFile       = 0x0000_00_00, // The lexer uses this as an end of stream token to the parser.
+        EndOfFile       = 0x0000_00_05, // The lexer uses this as an end of stream token to the parser.
 
         // Basic types
         Identifier      = 0x0000_01_00,
@@ -34,10 +34,11 @@
         Dot             = '.',
         Comma           = ',',
         Colon           = ':',
-        Simicolon       = ';',
+        Semicolon       = ';',
         LeftParen       = '(',
         RightParen      = ')',
         Question        = '?',
+        Assign          = '=',
 
         // Operator symbols (Grouped roughly by prec)
         LogicalNot      = '!', // Unary
@@ -70,8 +71,7 @@
         Equals          = 0x0000_22_08, // ==
         NotEqual        = 0x0000_22_09, // !=
 
-        // Assignment symbols
-        Assign          = '=',
+        Arrow           = 0x0000_22_0A, // ->
 
         AddAssign       = 0x0000_32_00, // +=
         SubAssign       = 0x0000_32_01, // -=
@@ -87,9 +87,16 @@
         RightAssign     = 0x0000_33_01, // >>=
         SpaceShip       = 0x0000_33_02, // <=>
 
+        Spread          = 0x0000_33_03, // ...
+
         // Comment symbols
         EolComment      = 0x0000_42_00, // //
         CommentStart    = 0x0000_42_01, // /*
         CommentEnd      = 0x0000_42_02, // */
+
+        /// <summary>
+        /// Lexing error token.
+        /// </summary>
+        Error           = 0x7FFF_FF_FF
     }
 }

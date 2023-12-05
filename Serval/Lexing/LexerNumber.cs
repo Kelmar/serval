@@ -1,5 +1,7 @@
 ﻿using System;
 
+using Serval.Fault;
+
 namespace Serval.Lexing
 {
     public partial class Lexer
@@ -45,6 +47,7 @@ namespace Serval.Lexing
             // Parse a hexadecimal number
             string literal = "0";
             int value = 0;
+            int start = m_linePos;
             ++m_linePos;
 
             literal += m_line[m_linePos];
@@ -70,15 +73,21 @@ namespace Serval.Lexing
             }
 
             if (literal.ToLower() != "0x")
-                return new Token(literal, value, TokenType.IntConst, m_lineNumber);
+            {
+                return new Token(literal, TokenType.IntConst, m_lineNumber, start, m_linePos)
+                {
+                    Parsed = value
+                };
+            }
 
-            Error("Invalid hexadecimal number on line {0}", m_lineNumber);
+            Error(ErrorCodes.LexBadHex);
             return null;
         }
 
         private Token ReadNumber()
         {
             string number = "";
+            int start = m_linePos;
 
             // Check for hex
             if (CurrentChar == '0' && (m_linePos + 1) < m_line.Length && (m_line[m_linePos + 1] == 'x' || m_line[m_linePos + 1] == 'X'))
@@ -86,7 +95,7 @@ namespace Serval.Lexing
 
             TokenType type = TokenType.IntConst;
 
-            int whole = 0, @decimal = 0, exp = 0;
+            int whole, @decimal = 0, exp = 0;
             string parsed;
             
             (parsed, whole) = ReadNumberLiteral();
@@ -131,10 +140,16 @@ namespace Serval.Lexing
                 res += whole;
                 res *= Math.Pow(10, exp);
 
-                return new Token(number, (float)res, TokenType.FloatConst, m_lineNumber);
+                return new Token(number, TokenType.FloatConst, m_lineNumber, start, m_linePos)
+                {
+                    Parsed = (float)res
+                };
             }
 
-            return new Token(number, whole, type, m_lineNumber);
+            return new Token(number, type, m_lineNumber, start, m_linePos)
+            {
+                Parsed = whole
+            };
         }
     }
 }

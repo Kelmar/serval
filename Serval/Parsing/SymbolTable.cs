@@ -15,7 +15,7 @@ namespace Serval
         public Symbol AddEntry(VariableDecl decl)
         {
             if (m_entries.ContainsKey(decl.Identifier.Literal))
-                throw new CompileException(CompileErrors.SymbolRedefined, String.Empty, 0, null);
+                throw new CompileException(ErrorCodes.ParseAlreadyDefined, String.Empty, 0, null);
 
             var symbol = new Symbol(decl);
 

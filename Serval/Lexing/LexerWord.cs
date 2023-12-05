@@ -8,6 +8,8 @@ namespace Serval.Lexing
 
         private Token ReadKeywordOrIdentifier()
         {
+            int start = m_linePos;
+
             string word = ReadWordLiteral();
 
             if (!String.IsNullOrWhiteSpace(word))
@@ -24,7 +26,7 @@ namespace Serval.Lexing
                     "string" => TokenType.String,
                     "struct" => TokenType.Struct,
                     _ => TokenType.Identifier
-                }, m_lineNumber);
+                }, m_lineNumber, start, m_linePos);
             }
 
             return null;
