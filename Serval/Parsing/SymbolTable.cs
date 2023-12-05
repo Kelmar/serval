@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Text;
 
-using Serval.Parsing.AST;
+using Serval.AST;
 using Serval.Fault;
 
 namespace Serval

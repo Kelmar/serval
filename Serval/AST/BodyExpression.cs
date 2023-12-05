@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Serval.Parsing.AST
+namespace Serval.AST
 {
     public abstract class BodyExpression : Expression
     {

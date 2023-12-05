@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-using Serval.Parsing.AST;
+using Serval.AST;
 
 namespace Serval
 {

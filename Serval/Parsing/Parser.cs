@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
+using Serval.AST;
 using Serval.Lexing;
-using Serval.Parsing.AST;
 
 namespace Serval
 {
@@ -55,7 +55,7 @@ namespace Serval
 
         private void ErrorRecover()
         {
-            // Recover to simicolon
+            // Recover to semicolon
 
             while (m_lex.Current.Type != TokenType.EndOfFile && m_lex.Current.Type != (TokenType)';' && m_lex.MoveNext())
                 ;
@@ -123,7 +123,7 @@ namespace Serval
         }
 
         /// <summary>
-        /// uniary: primary
+        /// unary: primary
         ///       | '+' primary
         ///       | '-' primary
         ///       | '*' primary
@@ -132,10 +132,8 @@ namespace Serval
         ///       | '!' primary
         /// </summary>
         /// <returns></returns>
-        private Expression ParseUniary()
+        private Expression ParseUnary()
         {
-            char op = '\0';
-
             switch (m_lex.Current.Literal)
             {
             case "+":
@@ -144,7 +142,7 @@ namespace Serval
             case "&":
             case "~":
             case "!":
-                op = (char)m_lex.Current.Type;
+                char op = (char)m_lex.Current.Type;
                 m_lex.MoveNext();
                 var primary = ParsePrimary();
                 return new UnaryExpr(op, primary);
@@ -155,7 +153,7 @@ namespace Serval
         }
 
         /// <summary>
-        /// cast: uniary
+        /// cast: unary
         ///     | '(' type ')' cast
         /// </summary>
         /// <returns></returns>
@@ -179,7 +177,7 @@ namespace Serval
                 return new CastExpr(type, ParseCast());
             }
             else
-                return ParseUniary();
+                return ParseUnary();
         }
 
         private Expression ParseBinary(Func<Expression> sub, params string[] ops)
@@ -212,10 +210,10 @@ namespace Serval
         }
 
         /// <summary>
-        /// factor: uniary
-        ///       | factor '*' uniary
-        ///       | factor '/' uniary
-        ///       | factor '%' uniary
+        /// factor: unary
+        ///       | factor '*' unary
+        ///       | factor '/' unary
+        ///       | factor '%' unary
         /// </summary>
         /// <returns></returns>
         private Expression ParseFactor()
@@ -292,11 +290,6 @@ namespace Serval
             }
 
             Token ident = m_lex.Current;
-
-            if (ident == null)
-            {
-                throw new Exception("Not sure what's going on here, current token is null, end of file?");
-            }
 
             //Symbol symbol = m_symbolTab.FindEntry(ident.Literal);
 
@@ -425,16 +418,12 @@ namespace Serval
 
         private Expression ParseFunctionOrAssignment()
         {
-            switch (m_lex.LookAhead.Type)
+            return m_lex.LookAhead.Type switch
             {
-            case TokenType.Assign:
-                return ParseAssignment();
-
-            case TokenType.LeftParen:
-                return ParseFunctionCall();
-            }
-
-            return null;
+                TokenType.Assign => ParseAssignment(),
+                TokenType.LeftParen => ParseFunctionCall(),
+                _ => null,
+            };
         }
 
         /// <summary>
@@ -445,7 +434,7 @@ namespace Serval
         /// <returns></returns>
         private Expression ParseStatement()
         {
-            Expression rval = null;
+            Expression rval;
 
             switch (m_lex.Current.Type)
             {

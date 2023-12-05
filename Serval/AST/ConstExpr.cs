@@ -1,8 +1,7 @@
 ﻿using System;
-
 using Serval.Lexing;
 
-namespace Serval.Parsing.AST
+namespace Serval.AST
 {
     internal class ConstExpr : Expression
     {

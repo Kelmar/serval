@@ -1,4 +1,4 @@
-﻿namespace Serval.Parsing.AST
+﻿namespace Serval.AST
 {
     public class UnaryExpr : Expression
     {

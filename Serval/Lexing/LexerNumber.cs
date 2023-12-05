@@ -42,7 +42,7 @@ namespace Serval.Lexing
 
         private Token ReadHex()
         {
-            // Parse a hexidecimal number
+            // Parse a hexadecimal number
             string literal = "0";
             int value = 0;
             ++m_linePos;
@@ -72,7 +72,7 @@ namespace Serval.Lexing
             if (literal.ToLower() != "0x")
                 return new Token(literal, value, TokenType.IntConst, m_lineNumber);
 
-            Error("Invalid hexidecimal number on line {0}", m_lineNumber);
+            Error("Invalid hexadecimal number on line {0}", m_lineNumber);
             return null;
         }
 

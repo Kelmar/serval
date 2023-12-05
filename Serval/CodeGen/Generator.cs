@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 
+using Serval.AST;
 using Serval.Fault;
-using Serval.Parsing.AST;
 
 namespace Serval.CodeGen
 {
