@@ -155,6 +155,8 @@ namespace Serval.Lexing
 
             Debug.Assert(literal.Length > 0, "BUG: Did not parse a valid number.");
 
+            // TODO: Add support for number suffixes here.
+
             l = literal.ToString();
             d = digits.ToString();
 

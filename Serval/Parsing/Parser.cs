@@ -41,6 +41,7 @@ namespace Serval
         public void Dispose()
         {
             Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         private void Error(ErrorCodes errorCode, params object[] args)
@@ -52,12 +53,7 @@ namespace Serval
         private void ErrorRecover()
         {
             // Recover to semicolon
-
-            while (m_lex.Current.Type != TokenType.EndOfFile && m_lex.Current.Type != (TokenType)';' && m_lex.MoveNext())
-                ;
-
-            if (m_lex.Current.Type == (TokenType)';')
-                m_lex.MoveNext(); // Eat ';'
+            Resync(TokenType.Semicolon);
         }
 
         /// <summary>
@@ -206,18 +202,15 @@ namespace Serval
         {
             if (m_lex.Current.Type == (TokenType)'(' && Types.Contains(m_lex.LookAhead.Type))
             {
-                m_lex.MoveNext(); // Eat '('
+                // Eat '('
+                Expect(TokenType.LeftParen, TokenType.RightParen);
+
                 Token type = m_lex.Current;
                 m_lex.MoveNext();
 
-                if (m_lex.Current.Type != (TokenType)')')
-                {
-                    Error(ErrorCodes.ParseExpectedSymbol, m_lex.Current, TokenType.LeftParen);
-                    ErrorRecover();
+                // Eat ')'
+                if (!Expect(TokenType.RightParen, TokenType.Semicolon))
                     return null;
-                }
-
-                m_lex.MoveNext(); // Eat ')'
 
                 return new CastExpr(type, ParseCast());
             }
@@ -347,12 +340,8 @@ namespace Serval
 
             m_lex.MoveNext();
 
-            if (m_lex.Current.Type != TokenType.Assign)
-            {
-                Error(ErrorCodes.ParseExpectedSymbol, m_lex.Current, TokenType.Assign);
-                ErrorRecover();
+            if (!Expect(TokenType.Assign))
                 return null;
-            }
 
             m_lex.MoveNext(); // Eat '='
 
@@ -391,6 +380,8 @@ namespace Serval
             }
 
             m_lex.MoveNext();
+
+            // TODO: Look for optional assignment for variable initializer.
 
             return new VariableDecl(mod, type, ident);
         }
@@ -448,7 +439,8 @@ namespace Serval
             Token ident = m_lex.Current;
             m_lex.MoveNext();
 
-            m_lex.MoveNext(); // Eat '('
+            // Eat '('
+            Expect(TokenType.LeftParen, TokenType.RightParen);
 
             var args = ParseParameterList();
 
@@ -494,25 +486,12 @@ namespace Serval
 
             default:
                 Error(ErrorCodes.ParseUnexpectedSymbol, m_lex.Current);
-                ErrorRecover();
+                Resync(TokenType.Semicolon);
                 return null;
             }
 
-            if (rval == null)
-            {
-                Error(ErrorCodes.ParseUnknownError);
-                ErrorRecover();
+            if (!Expect(TokenType.Semicolon))
                 return null;
-            }
-
-            if (rval != null && m_lex.Current.Type != TokenType.Semicolon)
-            {
-                Error(ErrorCodes.ParseExpectedSymbol, m_lex.Current, TokenType.Semicolon);
-                ErrorRecover();
-                return null;
-            }
-
-            m_lex.MoveNext(); // Eat ';'
 
             return rval;
         }
