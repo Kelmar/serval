@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 
 using Serval.AST;
 using Serval.Fault;
@@ -44,9 +43,9 @@ namespace Serval
             Dispose(true);
         }
 
-        private void Error(Token t, ErrorCodes errorCode, params object[] args)
+        private void Error(ErrorCodes errorCode, params object[] args)
         {
-            m_reporter.Error(t, errorCode, args);
+            m_reporter.Error(m_lex.Current, errorCode, args);
         }
 
         private void ErrorRecover()
@@ -60,17 +59,58 @@ namespace Serval
                 m_lex.MoveNext(); // Eat ';'
         }
 
-        private Token Expect(TokenType type)
+        /// <summary>
+        /// Resyncs the lexer to a (hopefully) recoverable token.
+        /// </summary>
+        /// <param name="tokens">List of tokens to try to resync to.</param>
+        private void Resync(IList<TokenType> tokens)
         {
-            if (m_lex.Current.Type == type)
+            Debug.Assert(tokens != null);
+            Debug.Assert(tokens.Count > 0);
+
+            do
             {
-                Token rval = m_lex.Current;
-                m_lex.MoveNext();
-                return rval;
+                if (tokens.Contains(m_lex.Current.Type))
+                    break;
+            } while (m_lex.MoveNext());
+        }
+
+        /// <summary>
+        /// Resyncs the lexer to a (hopefully) recoverable token.
+        /// </summary>
+        /// <param name="first">The first token to try and resync to.</param>
+        /// <param name="args">List of tokens to try to resync to.</param>
+        private void Resync(TokenType first, params TokenType[] args)
+        {
+            var set = new List<TokenType>
+            {
+                first
+            };
+
+            if (args != null)
+                set.AddRange(args);
+
+            Resync(args);
+        }
+
+        /// <summary>
+        /// Checks for the desired token and advances the lexer if it's the correct type.
+        /// </summary>
+        /// <remarks>
+        /// Emits an error if the token is not what is expected and attempts to resync.
+        /// </remarks>
+        /// <param name="expected">The token we are expecting to find.</param>
+        /// <param name="resyncTo">Additional tokens to try to resync to.</param>
+        private void Expect(TokenType expected, params TokenType[] resyncTo)
+        {
+            if (m_lex.Current.Type != expected)
+            {
+                Error(ErrorCodes.ParseUnexpectedSymbol, m_lex.Current.Type, expected);
+                Resync(expected, resyncTo);
             }
 
-            Error(m_lex.Current, ErrorCodes.ParseExpectedSymbol, m_lex.Current, type);
-            return null;
+            if (m_lex.Current.Type == expected)
+                m_lex.MoveNext();
         }
 
         /// <summary>
@@ -99,9 +139,11 @@ namespace Serval
                 m_lex.MoveNext(); // Eat '('
                 rval = ParseExpression();
 
+                //Expect(TokenType.RightParen, TokenType.Semicolon);
+
                 if (m_lex.Current.Literal != ")")
                 {
-                    Error(m_lex.Current, ErrorCodes.ParseExpectedSymbol, m_lex.Current, TokenType.RightParen);
+                    Error(ErrorCodes.ParseExpectedSymbol, m_lex.Current, TokenType.RightParen);
                     return null;
                 }
 
@@ -109,7 +151,7 @@ namespace Serval
 
             default:
                 rval = null;
-                Error(m_lex.Current, ErrorCodes.ParseUnexpectedSymbol, m_lex.Current);
+                Error(ErrorCodes.ParseUnexpectedSymbol, m_lex.Current);
                 break;
             }
 
@@ -163,7 +205,7 @@ namespace Serval
 
                 if (m_lex.Current.Type != (TokenType)')')
                 {
-                    Error(m_lex.Current, ErrorCodes.ParseExpectedSymbol, m_lex.Current, TokenType.LeftParen);
+                    Error(ErrorCodes.ParseExpectedSymbol, m_lex.Current, TokenType.LeftParen);
                     ErrorRecover();
                     return null;
                 }
@@ -280,7 +322,7 @@ namespace Serval
         {
             if (m_lex.Current.Type != TokenType.Identifier)
             {
-                Error(m_lex.Current, ErrorCodes.ParseExpectedSymbol, m_lex.Current, TokenType.Identifier);
+                Error(ErrorCodes.ParseExpectedSymbol, m_lex.Current, TokenType.Identifier);
                 ErrorRecover();
                 return null;
             }
@@ -300,7 +342,7 @@ namespace Serval
 
             if (m_lex.Current.Type != TokenType.Assign)
             {
-                Error(m_lex.Current, ErrorCodes.ParseExpectedSymbol, m_lex.Current, TokenType.Assign);
+                Error(ErrorCodes.ParseExpectedSymbol, m_lex.Current, TokenType.Assign);
                 ErrorRecover();
                 return null;
             }
@@ -324,7 +366,7 @@ namespace Serval
 
             if (m_lex.Current.Type != TokenType.Identifier)
             {
-                Error(m_lex.Current, ErrorCodes.ParseExpectedSymbol, m_lex.Current, TokenType.Identifier);
+                Error(ErrorCodes.ParseExpectedSymbol, m_lex.Current, TokenType.Identifier);
                 return null;
             }
 
@@ -337,7 +379,7 @@ namespace Serval
 
             if (!Types.Contains(type))
             {
-                Error(m_lex.Current, ErrorCodes.ParseExpectedSymbol, m_lex.Current, SemanticType.TypeDeclaration);
+                Error(ErrorCodes.ParseExpectedSymbol, m_lex.Current, SemanticType.TypeDeclaration);
                 return null;
             }
 
@@ -374,7 +416,7 @@ namespace Serval
                     rval.Add(expr);
                 else if (!first)
                 {
-                    Error(m_lex.Current, ErrorCodes.ParseExpectedSymbol, m_lex.Current, SemanticType.CallArgument);
+                    Error(ErrorCodes.ParseExpectedSymbol, m_lex.Current, SemanticType.CallArgument);
                     ErrorRecover();
                     return null;
                 }
@@ -444,21 +486,21 @@ namespace Serval
                 break;
 
             default:
-                Error(m_lex.Current, ErrorCodes.ParseUnexpectedSymbol, m_lex.Current);
+                Error(ErrorCodes.ParseUnexpectedSymbol, m_lex.Current);
                 ErrorRecover();
                 return null;
             }
 
             if (rval == null)
             {
-                Error(m_lex.Current, ErrorCodes.ParseUnknownError);
+                Error(ErrorCodes.ParseUnknownError);
                 ErrorRecover();
                 return null;
             }
 
             if (rval != null && m_lex.Current.Type != TokenType.Semicolon)
             {
-                Error(m_lex.Current, ErrorCodes.ParseExpectedSymbol, m_lex.Current, TokenType.Semicolon);
+                Error(ErrorCodes.ParseExpectedSymbol, m_lex.Current, TokenType.Semicolon);
                 ErrorRecover();
                 return null;
             }
