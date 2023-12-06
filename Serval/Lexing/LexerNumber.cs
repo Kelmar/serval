@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Diagnostics;
+using System.Text;
 
 using Serval.Fault;
 
@@ -6,28 +8,28 @@ namespace Serval.Lexing
 {
     public partial class Lexer
     {
-        private (string literal, int value) ReadNumberLiteral()
+        private (string literal, string digits) ReadNumberLiteral()
         {
-            string literal = "";
-            int value = 0;
+            var literal = new StringBuilder();
+            var digits = new StringBuilder();
 
             while (m_linePos < m_line.Length)
             {
                 if (CurrentChar == '_')
                 {
-                    literal += CurrentChar;
+                    literal.Append(CurrentChar);
                     break;
                 }
 
                 if (!Char.IsDigit(CurrentChar))
                     break;
 
-                literal += CurrentChar;
-                value = value * 10 + (CurrentChar - '0');
+                literal.Append(CurrentChar);
+                digits.Append(CurrentChar);
                 ++m_linePos;
             }
 
-            return (literal, value);
+            return (literal.ToString(), digits.ToString());
         }
 
         private int ConvertHexChar(char c)
@@ -81,75 +83,103 @@ namespace Serval.Lexing
             }
 
             Error(ErrorCodes.LexBadHex);
-            return null;
+            return GetErrorToken();
         }
 
         private Token ReadNumber()
         {
-            string number = "";
-            int start = m_linePos;
-
             // Check for hex
             if (CurrentChar == '0' && (m_linePos + 1) < m_line.Length && (m_line[m_linePos + 1] == 'x' || m_line[m_linePos + 1] == 'X'))
                 return ReadHex();
 
+            int start = m_linePos;
             TokenType type = TokenType.IntConst;
 
-            int whole, @decimal = 0, exp = 0;
-            string parsed;
-            
-            (parsed, whole) = ReadNumberLiteral();
+            var literal = new StringBuilder();
+            var digits = new StringBuilder();
 
-            number += parsed;
+            string l, d;
+            
+            (l, d) = ReadNumberLiteral();
+
+            literal.Append(l);
+            digits.Append(d);
 
             // Check to see if we have a digit after the period
             if (CurrentChar == '.' && (m_linePos + 1) < m_line.Length && Char.IsDigit(m_line[m_linePos + 1]))
             {
                 ++m_linePos;
-                (parsed, @decimal) = ReadNumberLiteral();
 
-                number += "." + parsed;
+                (l, d) = ReadNumberLiteral();
+
+                literal.Append('.');
+                literal.Append(literal);
+
+                digits.Append('.');
+                digits.Append(d);
 
                 type = TokenType.FloatConst;
             }
 
             // Check to see if we have a digit after the 'E'
-            if (CurrentChar == 'e' || CurrentChar == 'E' && (m_linePos + 1) < m_line.Length && Char.IsDigit(m_line[m_linePos + 1]))
+            if (CurrentChar == 'e' || CurrentChar == 'E')
             {
-                number += CurrentChar;
-                ++m_linePos;
+                char litE = CurrentChar;
+                string litSign = String.Empty;
 
-                (parsed, exp) = ReadNumberLiteral();
+                int numPos = m_linePos + 1;
 
-                number += parsed;
+                if (NextChar == '+' || NextChar == '-')
+                {
+                    litSign = NextChar.ToString();
+                    ++numPos;
+                }
 
-                type = TokenType.FloatConst;
+                if ((m_linePos + numPos) < m_line.Length && Char.IsDigit(m_line[m_linePos + numPos]))
+                {
+                    m_linePos += numPos;
+
+                    (l, d) = ReadNumberLiteral();
+
+                    literal.Append(litE);
+                    literal.Append(litSign);
+                    literal.Append(l);
+
+                    digits.Append(litE);
+                    digits.Append(litSign);
+                    digits.Append(d);
+
+                    type = TokenType.FloatConst;
+                }
             }
 
-            // TODO: Add support of number type suffix.  E.g. 'L', 'UL', etc.
+            Debug.Assert(literal.Length > 0, "BUG: Did not parse a valid number.");
 
-            if (String.IsNullOrWhiteSpace(number))
-                return null;
+            l = literal.ToString();
+            d = digits.ToString();
 
             if (type == TokenType.FloatConst)
             {
-                // Take each part and calculate the value.  There's probably a better way to do this. -- B.Simonds (Nov 13, 2021)
-                double res = @decimal;
-
-                res /= Math.Pow(10, @decimal == 0 ? 1 : (Math.Log10(@decimal) + 1));
-                res += whole;
-                res *= Math.Pow(10, exp);
-
-                return new Token(number, TokenType.FloatConst, m_lineNumber, start, m_linePos)
+                if (Double.TryParse(d, out double dbl))
                 {
-                    Parsed = (float)res
-                };
+                    return new Token(l, TokenType.FloatConst, m_lineNumber, start, m_linePos)
+                    {
+                        Parsed = dbl
+                    };
+                }
+            }
+            else
+            {
+                if (Int32.TryParse(d, out int i))
+                {
+                    return new Token(l, TokenType.IntConst, m_lineNumber, start, m_linePos)
+                    {
+                        Parsed = i
+                    };
+                }
             }
 
-            return new Token(number, type, m_lineNumber, start, m_linePos)
-            {
-                Parsed = whole
-            };
+            return GetErrorToken();
         }
     }
 }

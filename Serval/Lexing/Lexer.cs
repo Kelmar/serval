@@ -49,7 +49,11 @@ namespace Serval.Lexing
 
         private char CurrentChar => m_line != null && m_linePos < m_line.Length ? m_line[m_linePos] : '\0';
 
-        object IEnumerator.Current => throw new NotImplementedException();
+        private char NextChar => m_line != null && (m_linePos + 1) < m_line.Length ? m_line[m_linePos + 1] : '\0';
+
+        object IEnumerator.Current => Current;
+
+        private Token GetErrorToken() => Token.Error(m_lineNumber, m_linePos);
 
         private void Error(ErrorCodes errorCode, params object[] args)
         {

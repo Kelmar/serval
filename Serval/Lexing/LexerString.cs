@@ -1,8 +1,8 @@
-﻿using Serval.Fault;
-
-using System;
+﻿using System;
 using System.Linq;
 using System.Text;
+
+using Serval.Fault;
 
 namespace Serval.Lexing
 {
@@ -33,18 +33,18 @@ namespace Serval.Lexing
             public char Control { get; set; }
         }
 
-        private string literalEscapes = "\"'\\";
+        private readonly string literalEscapes = "\"'\\";
 
-        private ControlEscape[] controlEscapes = new ControlEscape[]
-        {
-            new ControlEscape{ Character = 'a', Control = '\a' },
-            new ControlEscape{ Character = 'b', Control = '\b' },
-            new ControlEscape{ Character = 'f', Control = '\f' },
-            new ControlEscape{ Character = 'n', Control = '\n' },
-            new ControlEscape{ Character = 'r', Control = '\r' },
-            new ControlEscape{ Character = 't', Control = '\t' },
-            new ControlEscape{ Character = 'v', Control = '\v' }
-        };
+        private readonly ControlEscape[] controlEscapes =
+        [
+            new() { Character = 'a', Control = '\a' },
+            new() { Character = 'b', Control = '\b' },
+            new() { Character = 'f', Control = '\f' },
+            new() { Character = 'n', Control = '\n' },
+            new() { Character = 'r', Control = '\r' },
+            new() { Character = 't', Control = '\t' },
+            new() { Character = 'v', Control = '\v' }
+        ];
 
         private (string literal, int value) ReadStringOctal()
         {
@@ -132,7 +132,7 @@ namespace Serval.Lexing
                     // Octal escaped character (up to 3 digits)
                     (string oct, int val) = ReadStringOctal();
                     literal += oct;
-                    byte[] b = new byte[1] { (byte)val };
+                    byte[] b = [(byte)val];
                     rval = Encoding.ASCII.GetString(b)[0];
                 }
                 else if (CurrentChar == 'x')
@@ -147,7 +147,7 @@ namespace Serval.Lexing
 
                     if (hex.Length == 2)
                     {
-                        byte[] b = new byte[1] { (byte)val };
+                        byte[] b = [(byte)val];
                         rval = Encoding.ASCII.GetString(b)[0];
                     }
                     else
@@ -192,7 +192,7 @@ namespace Serval.Lexing
                 (string p, char c) = ReadSingleChar();
 
                 if (p == null)
-                    return null;
+                    return GetErrorToken();
 
                 literal.Append(p);
                 parsed.Append(c);
@@ -201,7 +201,7 @@ namespace Serval.Lexing
             if (CurrentChar != '"')
             {
                 Error(ErrorCodes.LexExpectedEndOfString);
-                return null;
+                return GetErrorToken();
             }
 
             literal.Append('"');
@@ -223,14 +223,14 @@ namespace Serval.Lexing
             (string parsed, char c) = ReadSingleChar();
 
             if (parsed == null)
-                return null;
+                return GetErrorToken();
 
             literal += parsed;
 
             if (CurrentChar != '\'')
             {
                 Error(ErrorCodes.LexExpectedEndOfChar);
-                return null;
+                return GetErrorToken();
             }
 
             literal += "'";
@@ -238,7 +238,7 @@ namespace Serval.Lexing
 
             return new Token(literal, TokenType.CharConst, m_lineNumber, start, m_linePos)
             {
-                Parsed = c.ToString() // TODO: Change to just char later.
+                Parsed = c.ToString() // TODO: Change to char type later.
             };
         }
     }
