@@ -1,8 +1,8 @@
 ﻿namespace Serval.AST
 {
-    public class UnaryExpr : Expression
+    public class UnaryExpr : ExpressionNode
     {
-        public UnaryExpr(char op, Expression rhs)
+        public UnaryExpr(char op, ExpressionNode rhs)
         {
             Operator = op;
             Right = rhs;
@@ -10,7 +10,7 @@
 
         public char Operator { get; }
 
-        public Expression Right { get; }
+        public ExpressionNode Right { get; }
 
         public override string ToString()
         {

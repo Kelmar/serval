@@ -2,7 +2,7 @@
 
 namespace Serval.AST
 {
-    public class PrimaryExpr : Expression
+    public class PrimaryExpr : ExpressionNode
     {
         public PrimaryExpr(Token token)
         {

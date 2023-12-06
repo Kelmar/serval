@@ -2,7 +2,7 @@
 
 namespace Serval.AST
 {
-    public class VariableDecl : Expression
+    public class VariableDecl : ExpressionNode
     {
         public VariableDecl(TokenType modifier, TokenType type, Token ident)
         {

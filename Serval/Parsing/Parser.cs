@@ -48,6 +48,7 @@ namespace Serval
             m_reporter.Error(m_lex.Current, errorCode, args);
         }
 
+        [Obsolete("Use Resync() and Expect()")]
         private void ErrorRecover()
         {
             // Recover to semicolon
@@ -101,16 +102,22 @@ namespace Serval
         /// </remarks>
         /// <param name="expected">The token we are expecting to find.</param>
         /// <param name="resyncTo">Additional tokens to try to resync to.</param>
-        private void Expect(TokenType expected, params TokenType[] resyncTo)
+        /// <returns>True if the expected item was found, false if not.</returns>
+        private bool Expect(TokenType expected, params TokenType[] resyncTo)
         {
+            bool rval = true;
+
             if (m_lex.Current.Type != expected)
             {
                 Error(ErrorCodes.ParseUnexpectedSymbol, m_lex.Current.Type, expected);
                 Resync(expected, resyncTo);
+                rval = false;
             }
 
             if (m_lex.Current.Type == expected)
                 m_lex.MoveNext();
+
+            return rval;
         }
 
         /// <summary>
@@ -119,9 +126,9 @@ namespace Serval
         ///        | '(' expression ')'
         /// </summary>
         /// <returns></returns>
-        private Expression ParsePrimary()
+        private ExpressionNode ParsePrimary()
         {
-            Expression rval;
+            ExpressionNode rval;
 
             switch (m_lex.Current.Type)
             {
@@ -170,7 +177,7 @@ namespace Serval
         ///       | '!' primary
         /// </summary>
         /// <returns></returns>
-        private Expression ParseUnary()
+        private ExpressionNode ParseUnary()
         {
             switch (m_lex.Current.Literal)
             {
@@ -195,7 +202,7 @@ namespace Serval
         ///     | '(' type ')' cast
         /// </summary>
         /// <returns></returns>
-        private Expression ParseCast()
+        private ExpressionNode ParseCast()
         {
             if (m_lex.Current.Type == (TokenType)'(' && Types.Contains(m_lex.LookAhead.Type))
             {
@@ -218,9 +225,9 @@ namespace Serval
                 return ParseUnary();
         }
 
-        private Expression ParseBinary(Func<Expression> sub, params string[] ops)
+        private ExpressionNode ParseBinary(Func<ExpressionNode> sub, params string[] ops)
         {
-            Expression lhs = sub();
+            ExpressionNode lhs = sub();
 
             if (lhs == null)
                 return null;
@@ -254,7 +261,7 @@ namespace Serval
         ///       | factor '%' unary
         /// </summary>
         /// <returns></returns>
-        private Expression ParseFactor()
+        private ExpressionNode ParseFactor()
         {
             return ParseBinary(ParseCast, "*", "/", "%");
         }
@@ -265,7 +272,7 @@ namespace Serval
         ///         | additive '-' factor
         /// </summary>
         /// <returns></returns>
-        private Expression ParseAdditive()
+        private ExpressionNode ParseAdditive()
         {
             return ParseBinary(ParseFactor, "+", "-");
         }
@@ -276,7 +283,7 @@ namespace Serval
         ///      | shift '>>' additive
         /// </summary>
         /// <returns></returns>
-        private Expression ParseShift()
+        private ExpressionNode ParseShift()
         {
             return ParseBinary(ParseAdditive, "<<", ">>");
         }
@@ -289,7 +296,7 @@ namespace Serval
         ///           | relational '>=' shift
         /// </summary>
         /// <returns></returns>
-        private Expression ParseRelational()
+        private ExpressionNode ParseRelational()
         {
             return ParseBinary(ParseShift, "<", ">", "<=", ">=");
         }
@@ -300,7 +307,7 @@ namespace Serval
         ///         | equality '!=' relational
         /// </summary>
         /// <returns></returns>
-        private Expression ParseEquality()
+        private ExpressionNode ParseEquality()
         {
             return ParseBinary(ParseRelational, "==", "!=");
         }
@@ -309,7 +316,7 @@ namespace Serval
         /// expression: equality
         /// </summary>
         /// <returns></returns>
-        private Expression ParseExpression()
+        private ExpressionNode ParseExpression()
         {
             return ParseEquality();
         }
@@ -318,7 +325,7 @@ namespace Serval
         /// assignment: [ident] '=' expression
         /// </summary>
         /// <returns></returns>
-        private Expression ParseAssignment()
+        private ExpressionNode ParseAssignment()
         {
             if (m_lex.Current.Type != TokenType.Identifier)
             {
@@ -349,7 +356,7 @@ namespace Serval
 
             m_lex.MoveNext(); // Eat '='
 
-            Expression rval = new AssignmentStatement(ident, ParseExpression());
+            ExpressionNode rval = new AssignmentStatement(ident, ParseExpression());
 
             return rval;
         }
@@ -359,7 +366,7 @@ namespace Serval
         ///            | "const" [ident] ":" [type]
         /// </summary>
         /// <returns></returns>
-        private Expression ParseDeclaration()
+        private ExpressionNode ParseDeclaration()
         {
             TokenType mod = m_lex.Current.Type;
             m_lex.MoveNext();
@@ -392,7 +399,7 @@ namespace Serval
         /// call_argument: expression
         /// </summary>
         /// <returns></returns>
-        private Expression ParseCallArgument()
+        private ExpressionNode ParseCallArgument()
         {
             return ParseExpression();
         }
@@ -403,9 +410,9 @@ namespace Serval
         ///               | parameter_list ',' call_argument
         /// </summary>
         /// <returns></returns>
-        private List<Expression> ParseParameterList()
+        private List<ExpressionNode> ParseParameterList()
         {
-            var rval = new List<Expression>();
+            var rval = new List<ExpressionNode>();
             bool first = true;
 
             while (true)
@@ -436,7 +443,7 @@ namespace Serval
         /// function_call: identifier '(' parameter_list ')'
         /// </summary>
         /// <returns></returns>
-        private Expression ParseFunctionCall()
+        private ExpressionNode ParseFunctionCall()
         {
             Token ident = m_lex.Current;
             m_lex.MoveNext();
@@ -454,7 +461,7 @@ namespace Serval
             return new FunctionCallExpr(ident.Literal, args);
         }
 
-        private Expression ParseFunctionOrAssignment()
+        private ExpressionNode ParseFunctionOrAssignment()
         {
             return m_lex.LookAhead.Type switch
             {
@@ -470,9 +477,9 @@ namespace Serval
         ///          | declaration ';'
         /// </summary>
         /// <returns></returns>
-        private Expression ParseStatement()
+        private ExpressionNode ParseStatement()
         {
-            Expression rval;
+            ExpressionNode rval;
 
             switch (m_lex.Current.Type)
             {
@@ -516,7 +523,7 @@ namespace Serval
 
             while (m_lex.Current.Type != TokenType.EndOfFile)
             {
-                Expression expr = ParseStatement();
+                ExpressionNode expr = ParseStatement();
 
                 if (expr != null)
                     rval.Expressions.Add(expr);

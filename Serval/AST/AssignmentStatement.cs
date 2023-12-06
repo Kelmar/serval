@@ -4,7 +4,7 @@ namespace Serval.AST
 {
     public class AssignmentStatement : StatementExpr
     {
-        public AssignmentStatement(Token ident, Expression body)
+        public AssignmentStatement(Token ident, ExpressionNode body)
         {
             Identifier = ident;
             Body = body;
@@ -12,7 +12,7 @@ namespace Serval.AST
 
         public Token Identifier { get; }
 
-        public Expression Body { get; }
+        public ExpressionNode Body { get; }
 
         public override string ToString()
         {

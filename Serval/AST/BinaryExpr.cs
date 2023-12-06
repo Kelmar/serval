@@ -1,8 +1,8 @@
 ﻿namespace Serval.AST
 {
-    public class BinaryExpr : Expression
+    public class BinaryExpr : ExpressionNode
     {
-        public BinaryExpr(string op, Expression lhs, Expression rhs)
+        public BinaryExpr(string op, ExpressionNode lhs, ExpressionNode rhs)
         {
             Operator = op;
             Left = lhs;
@@ -11,9 +11,9 @@
 
         public string Operator { get; }
 
-        public Expression Left { get; }
+        public ExpressionNode Left { get; }
 
-        public Expression Right { get; }
+        public ExpressionNode Right { get; }
 
         public override string ToString()
         {

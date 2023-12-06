@@ -2,9 +2,9 @@
 
 namespace Serval.AST
 {
-    class CastExpr : Expression
+    class CastExpr : ExpressionNode
     {
-        public CastExpr(Token type, Expression rhs)
+        public CastExpr(Token type, ExpressionNode rhs)
         {
             Type = type;
             Right = rhs;
@@ -12,7 +12,7 @@ namespace Serval.AST
 
         public Token Type { get; }
 
-        public Expression Right { get; }
+        public ExpressionNode Right { get; }
 
         public override string ToString()
         {

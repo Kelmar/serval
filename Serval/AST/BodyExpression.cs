@@ -4,8 +4,8 @@ using System.Text;
 
 namespace Serval.AST
 {
-    public abstract class BodyExpression : Expression
+    public abstract class BodyExpression : ExpressionNode
     {
-        public List<Expression> Expressions { get; } = new List<Expression>();
+        public List<ExpressionNode> Expressions { get; } = new List<ExpressionNode>();
     }
 }

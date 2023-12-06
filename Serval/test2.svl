@@ -1,6 +1,6 @@
-﻿int foo;
-int bar;
-int baz;
+﻿var foo : int;
+var bar : int;
+var baz : int;
 
 foo = 5;
 bar = (string)(int)(0x20 + -foo * !(5.5 + 10.6e4));
@@ -17,10 +17,8 @@ baz = bar << 5 + 10;
 
 baz = foo + /* block */ bar;
 
-string cat;
+var cat : string;
 cat = "This is a test -\x20- -\x0020- -\0- \r\n";
-
-// New syntax?
 
 const foo : int = 0;
 var bar : string = "Hi";
@@ -64,7 +62,7 @@ class Widget : Sprocket, IGreeter
 {
 private:
     var m_member : int;
-    var m_callback : func (): string;
+    var m_callback : func () : string;
 
     func greeting() : string
     {
