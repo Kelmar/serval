@@ -29,6 +29,7 @@ namespace Serval.Fault
         ParseAlreadyDefined     = 2004,
         ParseUndeclaredVar      = 2005,
         ParseAssignToLabel      = 2006,
+        ParseTypeNotValidHere   = 2007,
 
         ParseUnknownError       = 2999,
     }

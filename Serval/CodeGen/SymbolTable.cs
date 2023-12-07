@@ -8,17 +8,31 @@ namespace Serval.CodeGen
     {
         private readonly Dictionary<string, Symbol> m_entries = [];
 
-        public Symbol AddEntry(string name, SymbolType type)
+        /// <summary>
+        /// Add a new entry to the symbol table.
+        /// </summary>
+        /// <remarks>
+        /// If the symbol already exists, then the existing symbol is returned instead.
+        /// </remarks>
+        /// <param name="name">The name of the symbol to add</param>
+        /// <param name="type">The symbol's basic type</param>
+        /// <returns>The newly created symbol.</returns>
+        public Symbol Add(string name, SymbolType type)
         {
             if (!m_entries.ContainsKey(name))
                 m_entries[name] = new Symbol(name, type);
-            
+
             return m_entries[name];
         }
 
-        public Symbol AddEntry(Token decl, SymbolType type) => AddEntry(decl.Literal, type);
-        
-        public Symbol FindEntry(string name)
+        public Symbol Add(Token decl, SymbolType type) => Add(decl.Literal, type);
+
+        /// <summary>
+        /// Look for a symbol table entry
+        /// </summary>
+        /// <param name="name">The name of the symbol to look for.</param>
+        /// <returns>The symbol if found, null if not.</returns>
+        public Symbol Find(string name)
         {
             if (m_entries.TryGetValue(name, out Symbol rval))
                 return rval;
@@ -31,10 +45,19 @@ namespace Serval.CodeGen
         /// </summary>
         public void InitGlobal()
         {
-            AddEntry("int", SymbolType.Type);
-            AddEntry("char", SymbolType.Type);
-            AddEntry("float", SymbolType.Type);
-            AddEntry("string", SymbolType.Type);
+            Symbol e;
+
+            e = Add("int", SymbolType.Type);
+            e.IsSpecial = true;
+
+            e = Add("char", SymbolType.Type);
+            e.IsSpecial = true;
+
+            e = Add("float", SymbolType.Type);
+            e.IsSpecial = true;
+
+            e = Add("string", SymbolType.Type);
+            e.IsSpecial = true;
         }
     }
 }

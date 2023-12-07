@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 
+using Serval.CodeGen;
 using Serval.Fault;
 using Serval.Lexing;
 
@@ -35,6 +36,7 @@ namespace Serval
                 ErrorCodes.ParseAlreadyDefined => "Identifier '{0}' already defined on line {1}",
                 ErrorCodes.ParseUndeclaredVar => "Undeclared variable '{0}'",
                 ErrorCodes.ParseAssignToLabel => "Cannot assign to label '{0}'",
+                ErrorCodes.ParseTypeNotValidHere => "'{0}' is a type, which is not valid in this context",
 
                 ErrorCodes.ParseUnknownError => "BUG: Unknown parsing error",
 
@@ -75,6 +77,9 @@ namespace Serval
                 default:
                     return TranslateTokenType(token.Type);
                 }
+
+            case Symbol symbol:
+                return symbol.Name;
 
             case TokenType type:
                 return TranslateTokenType(type);

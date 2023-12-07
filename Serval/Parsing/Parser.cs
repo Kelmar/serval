@@ -160,7 +160,7 @@ namespace Serval
 
             Expect(TokenType.Colon);
 
-            var type = m_symbolTable.FindEntry(m_lex.Current.Literal);
+            var type = m_symbolTable.Find(m_lex.Current.Literal);
 
             if (type == null || type.Type != SymbolType.Type)
             {
@@ -170,7 +170,7 @@ namespace Serval
 
             m_lex.MoveNext();
 
-            Symbol sym = m_symbolTable.FindEntry(ident.Literal);
+            Symbol sym = m_symbolTable.Find(ident.Literal);
 
             if (sym != null)
             {
@@ -178,7 +178,7 @@ namespace Serval
                 return null;
             }
 
-            sym = m_symbolTable.AddEntry(ident, SymbolType.Variable);
+            sym = m_symbolTable.Add(ident, SymbolType.Variable);
 
             // TODO: Look for optional assignment for variable initializer.
 

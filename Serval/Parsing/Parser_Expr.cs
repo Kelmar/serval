@@ -23,14 +23,20 @@ namespace Serval
             switch (m_lex.Current.Type)
             {
             case TokenType.Identifier:
-                Symbol sym = m_symbolTable.FindEntry(m_lex.Current.Literal);
+                Symbol sym = m_symbolTable.Find(m_lex.Current.Literal);
 
                 if (sym == null)
                 {
                     Error(ErrorCodes.ParseUndeclaredVar, m_lex.Current);
 
-                    // So we only warn a bout undeclared once.
-                    m_symbolTable.AddEntry(m_lex.Current, SymbolType.Undefined);
+                    // So we only warn about undeclared once.
+                    m_symbolTable.Add(m_lex.Current, SymbolType.Undefined);
+                }
+
+                if (sym.Type == SymbolType.Type)
+                {
+                    // We can't read from a "type" symbol
+                    Error(ErrorCodes.ParseTypeNotValidHere, sym);
                 }
 
                 rval = new VariableExpr(sym);
@@ -100,7 +106,7 @@ namespace Serval
         {
             if (m_lex.Current.Type == (TokenType)'(')
             {
-                Symbol type = m_symbolTable.FindEntry(m_lex.LookAhead.Literal);
+                Symbol type = m_symbolTable.Find(m_lex.LookAhead.Literal);
 
                 // TODO: If type is undefined, then it's probably the start of a lambda.
 
