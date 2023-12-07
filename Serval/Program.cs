@@ -1,50 +1,74 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
 using Serval.CodeGen;
-using Serval.Fault;
 using Serval.Lexing;
 
 namespace Serval
 {
     class Program
     {
-        static void Test1()
+        private static string s_filename;
+
+        static void Compile(string filename)
         {
-            var rep = new Reporter();
+            var reporter = new Reporter();
+            var symbolTable = new SymbolTable();
 
-            using var s = File.OpenRead("test.svl");
-            using var lex = new Lexer(s, rep);
+            symbolTable.InitGlobal();
 
-            using var parser = new Parser(lex, rep);
+            using var input = File.OpenRead(filename);
+            using var lex = new Lexer(input, reporter);
+
+            using var parser = new Parser(symbolTable, lex, reporter);
 
             var module = parser.ParseModule();
 
             // By this point we should have a correct program
 
-            if (rep.ErrorCount == 0)
+            if (reporter.ErrorCount == 0)
             {
                 using var gen = new Generator();
                 gen.Generate(module);
             }
 
-            Console.WriteLine("Errors: {0}, Warnings: {1}", rep.ErrorCount, rep.WarnCount);
+            Console.WriteLine("Errors: {0}, Warnings: {1}", reporter.ErrorCount, reporter.WarnCount);
+        }
+
+        static bool ParseArguments(string[] args)
+        {
+            var argStack = new Stack<string>(args.Reverse());
+
+            while (argStack.Any())
+            {
+                string arg = argStack.Pop();
+
+                s_filename = arg;
+            }
+
+            if (String.IsNullOrWhiteSpace(s_filename))
+            {
+                Console.Error.WriteLine("No input files.");
+                return false;
+            }
+
+            return true;
         }
 
         static void Main(string[] args)
         {
             try
             {
-                Test1();
-            }
-            catch (CompilerBugException ex)
-            {
-                Console.WriteLine("COMPILER BUG!\r\n{0}", ex);
+                if (!ParseArguments(args))
+                    return;
+
+                Compile(s_filename);
             }
             catch (Exception ex)
             {
-                Console.WriteLine("ERROR: {0}", ex);
+                Console.WriteLine("FATAL: {0}", ex);
             }
         }
     }

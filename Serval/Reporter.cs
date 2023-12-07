@@ -100,7 +100,7 @@ namespace Serval
                 message = String.Format(message, args.Select(TranslateObject).ToArray());
 
             string file = String.Empty;
-            Console.WriteLine("{0}{1}: ERROR S{2}: %{3}", file, lineNumber, (int)errorCode, message);
+            Console.WriteLine("{0}{1}: ERROR S{2}: {3}", file, lineNumber, (int)errorCode, message);
         }
 
         public void Error(Token t, ErrorCodes errorCode, params object[] args)

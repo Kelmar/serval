@@ -228,5 +228,10 @@ namespace Serval.Lexing
             //m_input.BaseStream.Seek(0, SeekOrigin.Begin);
             //Current = null;
         }
+
+        public override string ToString()
+        {
+            return $"CUR: '{Current.Literal}'  NEXT: '{LookAhead.Literal}'";
+        }
     }
 }

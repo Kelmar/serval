@@ -25,5 +25,16 @@ namespace Serval.CodeGen
 
             return null;
         }
+
+        /// <summary>
+        /// Initializes system built in entries for global symbol table.
+        /// </summary>
+        public void InitGlobal()
+        {
+            AddEntry("int", SymbolType.Type);
+            AddEntry("char", SymbolType.Type);
+            AddEntry("float", SymbolType.Type);
+            AddEntry("string", SymbolType.Type);
+        }
     }
 }

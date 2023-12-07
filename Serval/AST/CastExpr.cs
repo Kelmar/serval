@@ -1,16 +1,16 @@
-﻿using Serval.Lexing;
+﻿using Serval.CodeGen;
 
 namespace Serval.AST
 {
     class CastExpr : ExpressionNode
     {
-        public CastExpr(Token type, ExpressionNode rhs)
+        public CastExpr(Symbol type, ExpressionNode rhs)
         {
             Type = type;
             Right = rhs;
         }
 
-        public Token Type { get; }
+        public Symbol Type { get; }
 
         public ExpressionNode Right { get; }
 

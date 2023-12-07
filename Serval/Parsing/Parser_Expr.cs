@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 
 using Serval.AST;
+using Serval.CodeGen;
 using Serval.Fault;
 using Serval.Lexing;
 
@@ -22,35 +23,40 @@ namespace Serval
             switch (m_lex.Current.Type)
             {
             case TokenType.Identifier:
-                rval = new VariableExpr(m_lex.Current);
+                Symbol sym = m_symbolTable.FindEntry(m_lex.Current.Literal);
+
+                if (sym == null)
+                {
+                    Error(ErrorCodes.ParseUndeclaredVar, m_lex.Current);
+
+                    // So we only warn a bout undeclared once.
+                    m_symbolTable.AddEntry(m_lex.Current, SymbolType.Undefined);
+                }
+
+                rval = new VariableExpr(sym);
+                m_lex.MoveNext();
                 break;
 
             case TokenType.FloatConst:
             case TokenType.IntConst:
             case TokenType.StringConst:
                 rval = new ConstExpr(m_lex.Current);
+                m_lex.MoveNext();
                 break;
 
             case (TokenType)'(':
                 m_lex.MoveNext(); // Eat '('
                 rval = ParseExpression();
 
-                //Expect(TokenType.RightParen, TokenType.Semicolon);
-
-                if (m_lex.Current.Literal != ")")
-                {
-                    Error(ErrorCodes.ParseExpectedSymbol, m_lex.Current, TokenType.RightParen);
-                    return null;
-                }
+                // Eat ')'
+                Expect(TokenType.RightParen, TokenType.Semicolon);
                 break;
 
             default:
-                rval = null;
+                rval = new DummyExpr();
                 Error(ErrorCodes.ParseUnexpectedSymbol, m_lex.Current);
                 break;
             }
-
-            m_lex.MoveNext(); // Also performs error recovery
 
             return rval;
         }
@@ -92,22 +98,29 @@ namespace Serval
         /// <returns></returns>
         private ExpressionNode ParseCast()
         {
-            if (m_lex.Current.Type == (TokenType)'(' && s_typeTokens.Contains(m_lex.LookAhead.Type))
+            if (m_lex.Current.Type == (TokenType)'(')
             {
-                // Eat '('
-                Expect(TokenType.LeftParen, TokenType.RightParen);
+                Symbol type = m_symbolTable.FindEntry(m_lex.LookAhead.Literal);
 
-                Token type = m_lex.Current;
-                m_lex.MoveNext();
+                // TODO: If type is undefined, then it's probably the start of a lambda.
 
-                // Eat ')'
-                if (!Expect(TokenType.RightParen, TokenType.Semicolon))
-                    return null;
+                if (type?.Type == SymbolType.Type)
+                {
+                    // Eat '('
+                    Expect(TokenType.LeftParen, TokenType.RightParen);
 
-                return new CastExpr(type, ParseCast());
+                    // Eat type
+                    m_lex.MoveNext();
+
+                    // Eat ')'
+                    if (!Expect(TokenType.RightParen, TokenType.Semicolon))
+                        return new DummyExpr();
+
+                    return new CastExpr(type, ParseCast());
+                }
             }
-            else
-                return ParseUnary();
+            
+            return ParseUnary();
         }
 
         private ExpressionNode ParseBinary(Func<ExpressionNode> sub, params string[] ops)

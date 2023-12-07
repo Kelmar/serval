@@ -4,6 +4,7 @@
     {
         Undefined = 0,
         Variable  = 1,
-        Label     = 2
+        Label     = 2,
+        Type      = 3
     }
 }

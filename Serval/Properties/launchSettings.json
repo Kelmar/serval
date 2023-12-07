@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Serval": {
+      "commandName": "Project",
+      "commandLineArgs": "test.svl"
+    }
+  }
+}

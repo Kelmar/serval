@@ -1,10 +1,11 @@
-﻿using Serval.Lexing;
+﻿using Serval.CodeGen;
+using Serval.Lexing;
 
 namespace Serval.AST
 {
     public class VariableDecl : ExpressionNode
     {
-        public VariableDecl(TokenType modifier, TokenType type, Token ident)
+        public VariableDecl(TokenType modifier, Symbol type, Symbol ident)
         {
             Modifier = modifier;
             Type = type;
@@ -13,13 +14,13 @@ namespace Serval.AST
 
         public TokenType Modifier { get; }
 
-        public Token Identifier { get; }
+        public Symbol Identifier { get; }
 
-        public TokenType Type { get; }
+        public Symbol Type { get; }
 
         public override string ToString()
         {
-            return $"[DECL {Type} {Identifier.Literal}]";
+            return $"[DECL {Type.Name} {Identifier.Name}]";
         }
     }
 }

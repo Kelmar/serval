@@ -1,17 +1,14 @@
-﻿using System;
-using Serval.Lexing;
+﻿using Serval.CodeGen;
 
 namespace Serval.AST
 {
     public class VariableExpr : ExpressionNode
     {
-        public VariableExpr(Token token)
+        public VariableExpr(Symbol symbol)
         {
-            Token = token;
+            Symbol = symbol;
         }
 
-        public Token Token { get; }
-
-        //public TypeExpr ResultType => throw new NotImplementedException();
+        public Symbol Symbol { get; }
     }
 }

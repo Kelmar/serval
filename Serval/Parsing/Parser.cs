@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 
 using Serval.AST;
+using Serval.CodeGen;
 using Serval.Fault;
 using Serval.Lexing;
 
@@ -10,24 +11,17 @@ namespace Serval
 {
     public partial class Parser : IDisposable
     {
-        // TODO: These should be moved into the global symbol table later.
-
-        private static readonly HashSet<TokenType> s_typeTokens =
-        [
-            TokenType.Int,
-            TokenType.Char,
-            TokenType.Float,
-            TokenType.String
-        ];
-
+        private readonly SymbolTable m_symbolTable;
         private readonly Lexer m_lex;
         private readonly IReporter m_reporter;
 
-        public Parser(Lexer lex, IReporter reporter)
+        public Parser(SymbolTable symbolTable, Lexer lex, IReporter reporter)
         {
+            Debug.Assert(symbolTable != null);
             Debug.Assert(lex != null);
             Debug.Assert(reporter != null);
-
+            
+            m_symbolTable = symbolTable;
             m_lex = lex;
             m_reporter = reporter;
 
@@ -82,7 +76,7 @@ namespace Serval
             if (args != null)
                 set.AddRange(args);
 
-            Resync(args);
+            Resync(set);
         }
 
         /// <summary>
@@ -140,8 +134,6 @@ namespace Serval
             if (!Expect(TokenType.Assign))
                 return null;
 
-            m_lex.MoveNext(); // Eat '='
-
             ExpressionNode rval = new AssignmentStatement(ident, ParseExpression());
 
             return rval;
@@ -168,9 +160,9 @@ namespace Serval
 
             Expect(TokenType.Colon);
 
-            TokenType type = m_lex.Current.Type;
+            var type = m_symbolTable.FindEntry(m_lex.Current.Literal);
 
-            if (!s_typeTokens.Contains(type))
+            if (type == null || type.Type != SymbolType.Type)
             {
                 Error(ErrorCodes.ParseExpectedSymbol, m_lex.Current, SemanticType.TypeDeclaration);
                 return null;
@@ -178,9 +170,19 @@ namespace Serval
 
             m_lex.MoveNext();
 
+            Symbol sym = m_symbolTable.FindEntry(ident.Literal);
+
+            if (sym != null)
+            {
+                Error(ErrorCodes.ParseAlreadyDefined, sym);
+                return null;
+            }
+
+            sym = m_symbolTable.AddEntry(ident, SymbolType.Variable);
+
             // TODO: Look for optional assignment for variable initializer.
 
-            return new VariableDecl(mod, type, ident);
+            return new VariableDecl(mod, type, sym);
         }
 
         /// <summary>
@@ -205,23 +207,15 @@ namespace Serval
 
             while (true)
             {
-                var expr = ParseCallArgument();
-
-                if (expr != null)
-                    rval.Add(expr);
-                else if (!first)
-                {
-                    Error(ErrorCodes.ParseExpectedSymbol, m_lex.Current, SemanticType.CallArgument);
-                    Resync(TokenType.Semicolon);
-                    return null;
-                }
-
-                first = false;
+                if (!first && m_lex.Current.Type != TokenType.RightParen)
+                    Expect(TokenType.Comma, TokenType.RightParen);
 
                 if (m_lex.Current.Type == TokenType.RightParen)
                     break;
 
-                Expect(TokenType.Comma);
+                first = false;
+                var expr = ParseCallArgument();
+                rval.Add(expr);
             }
 
             return rval;
@@ -240,9 +234,6 @@ namespace Serval
             Expect(TokenType.LeftParen, TokenType.RightParen);
 
             var args = ParseParameterList();
-
-            if (args == null)
-                return null;
 
             // Eat ')'
             Expect(TokenType.RightParen);
