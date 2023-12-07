@@ -4,4 +4,11 @@ foo = 5 + 5;
 
 bar = foo;
 
+var baz : int;
+
+baz = !!!!foo;
+
+foo = sizeof(int);
+//bar = sizeof(foo);
+
 doThing(foo, bar);

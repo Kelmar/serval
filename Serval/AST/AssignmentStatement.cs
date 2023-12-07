@@ -1,22 +1,22 @@
-﻿using Serval.Lexing;
+﻿using Serval.CodeGen;
 
 namespace Serval.AST
 {
     public class AssignmentStatement : StatementExpr
     {
-        public AssignmentStatement(Token ident, ExpressionNode body)
+        public AssignmentStatement(Symbol ident, ExpressionNode body)
         {
             Identifier = ident;
             Body = body;
         }
 
-        public Token Identifier { get; }
+        public Symbol Identifier { get; }
 
         public ExpressionNode Body { get; }
 
         public override string ToString()
         {
-            return $"{Identifier.Literal} = {Body}";
+            return $"{Identifier.Name} = {Body}";
         }
     }
 }

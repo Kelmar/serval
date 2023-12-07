@@ -35,8 +35,10 @@ namespace Serval
                 ErrorCodes.ParseUnexpectedEOF => "Unexpected end of file",
                 ErrorCodes.ParseAlreadyDefined => "Identifier '{0}' already defined on line {1}",
                 ErrorCodes.ParseUndeclaredVar => "Undeclared variable '{0}'",
-                ErrorCodes.ParseAssignToLabel => "Cannot assign to label '{0}'",
+                ErrorCodes.ParseAssignToNonVar => "Cannot assign to non-variable '{0}'",
                 ErrorCodes.ParseTypeNotValidHere => "'{0}' is a type, which is not valid in this context",
+                ErrorCodes.ParseTypeExpected => "Type expected for {0} operator",
+                ErrorCodes.ParseTypeUndefined => "Type '{0}' not defined",
 
                 ErrorCodes.ParseUnknownError => "BUG: Unknown parsing error",
 
@@ -77,9 +79,6 @@ namespace Serval
                 default:
                     return TranslateTokenType(token.Type);
                 }
-
-            case Symbol symbol:
-                return symbol.Name;
 
             case TokenType type:
                 return TranslateTokenType(type);

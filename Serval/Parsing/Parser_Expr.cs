@@ -30,7 +30,13 @@ namespace Serval
                     Error(ErrorCodes.ParseUndeclaredVar, m_lex.Current);
 
                     // So we only warn about undeclared once.
-                    m_symbolTable.Add(m_lex.Current, SymbolType.Undefined);
+                    sym = m_symbolTable.Add(new Symbol
+                    {
+                        Name = m_lex.Current.Literal,
+                        Undefined = true,
+                        Type = SymbolType.Variable,
+                        LineNumber = m_lex.Current.LineNumber
+                    });
                 }
 
                 if (sym.Type == SymbolType.Type)
@@ -43,10 +49,23 @@ namespace Serval
                 m_lex.MoveNext();
                 break;
 
+            case TokenType.CharConst:
+                rval = new ConstExpr(m_lex.Current, m_symbolTable.Find("char"));
+                m_lex.MoveNext();
+                break;
+
             case TokenType.FloatConst:
+                rval = new ConstExpr(m_lex.Current, m_symbolTable.Find("float"));
+                m_lex.MoveNext();
+                break;
+
             case TokenType.IntConst:
+                rval = new ConstExpr(m_lex.Current, m_symbolTable.Find("int"));
+                m_lex.MoveNext();
+                break;
+
             case TokenType.StringConst:
-                rval = new ConstExpr(m_lex.Current);
+                rval = new ConstExpr(m_lex.Current, m_symbolTable.Find("string"));
                 m_lex.MoveNext();
                 break;
 
@@ -87,10 +106,53 @@ namespace Serval
             case "&":
             case "~":
             case "!":
-                char op = (char)m_lex.Current.Type;
-                m_lex.MoveNext();
-                var primary = ParsePrimary();
-                return new UnaryExpr(op, primary);
+                {
+                    char op = (char)m_lex.Current.Type;
+                    m_lex.MoveNext();
+                    var cast = ParseCast();
+                    return new UnaryExpr(op, cast);
+                }
+
+            case "sizeof":
+            case "typeof":
+                {
+                    TokenType op = m_lex.Current.Type;
+                    m_lex.MoveNext();
+                    Expect(TokenType.LeftParen);
+
+                    if (m_lex.Current.Type != TokenType.Identifier)
+                    {
+                        Error(ErrorCodes.ParseTypeExpected, op);
+                        return new DummyExpr();
+                    }
+
+                    var sym = m_symbolTable.Find(m_lex.Current.Literal);
+
+                    if (sym == null)
+                    {
+                        sym = m_symbolTable.Add(new Symbol
+                        {
+                            Name = m_lex.Current.Literal,
+                            Undefined = true,
+                            Type = SymbolType.Type,
+                            LineNumber = m_lex.Current.LineNumber
+                        });
+
+                        Error(ErrorCodes.ParseTypeUndefined, sym);
+                    }
+
+                    m_lex.MoveNext();
+
+                    Expect(TokenType.RightParen);
+                    
+                    if (sym.Type != SymbolType.Type)
+                    {
+                        Error(ErrorCodes.ParseTypeExpected, op);
+                        return new DummyExpr();
+                    }
+
+                    return new TypeExpr(op, sym);
+                }
 
             default:
                 return ParsePrimary();

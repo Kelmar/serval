@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
-
-using Serval.Lexing;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Serval.CodeGen
 {
@@ -17,15 +17,16 @@ namespace Serval.CodeGen
         /// <param name="name">The name of the symbol to add</param>
         /// <param name="type">The symbol's basic type</param>
         /// <returns>The newly created symbol.</returns>
-        public Symbol Add(string name, SymbolType type)
+        public Symbol Add(Symbol symbol)
         {
-            if (!m_entries.ContainsKey(name))
-                m_entries[name] = new Symbol(name, type);
+            Debug.Assert(symbol != null);
+            Debug.Assert(!String.IsNullOrWhiteSpace(symbol.Name));
 
-            return m_entries[name];
+            if (!m_entries.ContainsKey(symbol.Name))
+                m_entries[symbol.Name] = symbol;
+
+            return m_entries[symbol.Name];
         }
-
-        public Symbol Add(Token decl, SymbolType type) => Add(decl.Literal, type);
 
         /// <summary>
         /// Look for a symbol table entry
@@ -45,19 +46,37 @@ namespace Serval.CodeGen
         /// </summary>
         public void InitGlobal()
         {
-            Symbol e;
+            Add(new Symbol
+            {
+                Name = "int",
+                Type = SymbolType.Type,
+                IsSpecial = true,
+                LineNumber = 0
+            });
 
-            e = Add("int", SymbolType.Type);
-            e.IsSpecial = true;
+            Add(new Symbol
+            {
+                Name = "char",
+                Type = SymbolType.Type,
+                IsSpecial = true,
+                LineNumber = 0
+            });
 
-            e = Add("char", SymbolType.Type);
-            e.IsSpecial = true;
+            Add(new Symbol
+            {
+                Name = "float",
+                Type = SymbolType.Type,
+                IsSpecial = true,
+                LineNumber = 0
+            });
 
-            e = Add("float", SymbolType.Type);
-            e.IsSpecial = true;
-
-            e = Add("string", SymbolType.Type);
-            e.IsSpecial = true;
+            Add(new Symbol
+            {
+                Name = "string",
+                Type = SymbolType.Type,
+                IsSpecial = true,
+                LineNumber = 0
+            });
         }
     }
 }

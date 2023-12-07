@@ -28,8 +28,10 @@ namespace Serval.Fault
         ParseUnexpectedEOF      = 2003,
         ParseAlreadyDefined     = 2004,
         ParseUndeclaredVar      = 2005,
-        ParseAssignToLabel      = 2006,
+        ParseAssignToNonVar     = 2006,
         ParseTypeNotValidHere   = 2007,
+        ParseTypeExpected       = 2008,
+        ParseTypeUndefined      = 2009,
 
         ParseUnknownError       = 2999,
     }

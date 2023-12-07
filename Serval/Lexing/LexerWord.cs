@@ -18,13 +18,12 @@ namespace Serval.Lexing
                 {
                     "_" => TokenType.Discard,
                     "for" => TokenType.For,
-                    "int" => TokenType.Int,
                     "var" => TokenType.Var,
-                    "char" => TokenType.Char,
                     "class" => TokenType.Class,
                     "const" => TokenType.Const,
-                    "string" => TokenType.String,
+                    "sizeof" => TokenType.SizeOf,
                     "struct" => TokenType.Struct,
+                    "typeof" => TokenType.TypeOf,
                     _ => TokenType.Identifier
                 }, m_lineNumber, start, m_linePos);
             }

@@ -119,22 +119,29 @@ namespace Serval
             }
 
             Token ident = m_lex.Current;
-
-            //Symbol symbol = m_symbolTab.FindEntry(ident.Literal);
-
-            //if (symbol == null)
-            //{
-            //    Error(m_lex.Current, "Undefined identifier {0}", ident.Literal);
-            //    ErrorRecover();
-            //    return null;
-            //}
-
             m_lex.MoveNext();
 
-            if (!Expect(TokenType.Assign))
-                return null;
+            Symbol symbol = m_symbolTable.Find(ident.Literal);
 
-            ExpressionNode rval = new AssignmentStatement(ident, ParseExpression());
+            if (symbol == null)
+            {
+                Error(ErrorCodes.ParseUndeclaredVar, ident);
+
+                symbol = m_symbolTable.Add(new Symbol()
+                {
+                    Name = ident.Literal,
+                    Type = SymbolType.Variable,
+                    Undefined = true,
+                    LineNumber = ident.LineNumber
+                });
+            }
+
+            if (symbol.Type != SymbolType.Variable)
+                Error(ErrorCodes.ParseAssignToNonVar, symbol);
+
+            Expect(TokenType.Assign);
+
+            ExpressionNode rval = new AssignmentStatement(symbol, ParseExpression());
 
             return rval;
         }
@@ -178,7 +185,12 @@ namespace Serval
                 return null;
             }
 
-            sym = m_symbolTable.Add(ident, SymbolType.Variable);
+            sym = m_symbolTable.Add(new Symbol
+            {
+                Name = ident.Literal,
+                Type = SymbolType.Variable,
+                LineNumber = ident.LineNumber
+            });
 
             // TODO: Look for optional assignment for variable initializer.
 

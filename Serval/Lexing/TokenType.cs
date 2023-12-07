@@ -17,17 +17,14 @@
         Discard         = 0x0000_11_00, // _
 
         For             = 0x0000_13_00,
-        Int             = 0x0000_13_01,
-        Var             = 0x0000_13_02,
-
-        Char            = 0x0000_14_00,
+        Var             = 0x0000_13_01,
 
         Class           = 0x0000_15_00,
         Const           = 0x0000_15_01,
-        Float           = 0x0000_15_02,
 
-        String          = 0x0000_16_00,
+        SizeOf          = 0x0000_16_00,
         Struct          = 0x0000_16_01,
+        TypeOf          = 0x0000_16_02,
 
         // Misc symbols
         At              = '@',
@@ -39,6 +36,10 @@
         RightParen      = ')',
         Question        = '?',
         Assign          = '=',
+        LeftBracket     = '[',
+        RightBracket    = ']',
+        LeftCurl        = '{',
+        RightCurl       = '}',
 
         // Operator symbols (Grouped roughly by prec)
         LogicalNot      = '!', // Unary

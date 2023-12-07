@@ -1,26 +1,20 @@
 ﻿using System;
+
+using Serval.CodeGen;
 using Serval.Lexing;
 
 namespace Serval.AST
 {
     internal class ConstExpr : ExpressionNode
     {
-        public ConstExpr(Token token)
+        public ConstExpr(Token token, Symbol type)
         {
             Token = token;
-
-            Type = token.Type switch
-            {
-                TokenType.CharConst => TokenType.Char,
-                TokenType.StringConst => TokenType.String,
-                TokenType.IntConst => TokenType.Int,
-                TokenType.FloatConst => TokenType.Float,
-                _ => throw new Exception($"Unknown constant type {token.Type}")
-            };
+            Type = type;
         }
 
         public Token Token { get; }
 
-        public TokenType Type { get; }
+        public Symbol Type { get; }
     }
 }

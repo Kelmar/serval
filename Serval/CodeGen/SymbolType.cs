@@ -3,11 +3,6 @@
     public enum SymbolType
     {
         /// <summary>
-        /// Place holder for undefined symbols
-        /// </summary>
-        Undefined = 0,
-
-        /// <summary>
         /// Symbol is declared as a variable
         /// </summary>
         Variable  = 1,
