@@ -4,19 +4,19 @@ namespace Serval.AST
 {
     public class AssignmentStatement : StatementExpr
     {
-        public AssignmentStatement(Symbol ident, ExpressionNode body)
+        public AssignmentStatement(Symbol ident, ExpressionNode expression)
         {
             Identifier = ident;
-            Body = body;
+            Expression = expression;
         }
 
         public Symbol Identifier { get; }
 
-        public ExpressionNode Body { get; }
+        public ExpressionNode Expression { get; }
 
         public override string ToString()
         {
-            return $"{Identifier.Name} = {Body}";
+            return $"{Identifier.Name} = {Expression}";
         }
     }
 }

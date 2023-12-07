@@ -30,8 +30,8 @@ namespace Serval
 
             if (reporter.ErrorCount == 0)
             {
-                using var gen = new Generator();
-                gen.Generate(module);
+                using var gen = new TestExec();
+                gen.Execute(module);
             }
 
             Console.WriteLine("Errors: {0}, Warnings: {1}", reporter.ErrorCount, reporter.WarnCount);

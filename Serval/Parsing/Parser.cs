@@ -130,13 +130,13 @@ namespace Serval
                 symbol = m_symbolTable.Add(new Symbol()
                 {
                     Name = ident.Literal,
-                    Type = SymbolType.Variable,
+                    Usage = SymbolUsage.Variable,
                     Undefined = true,
                     LineNumber = ident.LineNumber
                 });
             }
 
-            if (symbol.Type != SymbolType.Variable)
+            if (symbol.Usage != SymbolUsage.Variable)
                 Error(ErrorCodes.ParseAssignToNonVar, symbol);
 
             Expect(TokenType.Assign);
@@ -169,7 +169,7 @@ namespace Serval
 
             var type = m_symbolTable.Find(m_lex.Current.Literal);
 
-            if (type == null || type.Type != SymbolType.Type)
+            if (type == null || type.Usage != SymbolUsage.Type)
             {
                 Error(ErrorCodes.ParseExpectedSymbol, m_lex.Current, SemanticType.TypeDeclaration);
                 return null;
@@ -188,7 +188,7 @@ namespace Serval
             sym = m_symbolTable.Add(new Symbol
             {
                 Name = ident.Literal,
-                Type = SymbolType.Variable,
+                Usage = mod == TokenType.Const ? SymbolUsage.Constant : SymbolUsage.Variable,
                 LineNumber = ident.LineNumber
             });
 

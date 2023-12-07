@@ -49,7 +49,7 @@ namespace Serval.CodeGen
             Add(new Symbol
             {
                 Name = "int",
-                Type = SymbolType.Type,
+                Usage = SymbolUsage.Type,
                 IsSpecial = true,
                 LineNumber = 0
             });
@@ -57,7 +57,7 @@ namespace Serval.CodeGen
             Add(new Symbol
             {
                 Name = "char",
-                Type = SymbolType.Type,
+                Usage = SymbolUsage.Type,
                 IsSpecial = true,
                 LineNumber = 0
             });
@@ -65,7 +65,7 @@ namespace Serval.CodeGen
             Add(new Symbol
             {
                 Name = "float",
-                Type = SymbolType.Type,
+                Usage = SymbolUsage.Type,
                 IsSpecial = true,
                 LineNumber = 0
             });
@@ -73,7 +73,7 @@ namespace Serval.CodeGen
             Add(new Symbol
             {
                 Name = "string",
-                Type = SymbolType.Type,
+                Usage = SymbolUsage.Type,
                 IsSpecial = true,
                 LineNumber = 0
             });

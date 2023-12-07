@@ -12,12 +12,12 @@ namespace Serval.CodeGen
         /// <summary>
         /// The type usage for this symbol.
         /// </summary>
-        public SymbolType Type { get; init; }
+        public SymbolUsage Usage { get; init; }
 
         /// <summary>
         /// Set if this was an undefined symbol.
         /// </summary>
-        public bool Undefined { get; init; }
+        public bool Undefined { get; init; } = false;
 
         /// <summary>
         /// Set if this is an internally defined symbol by the compiler.
@@ -29,6 +29,11 @@ namespace Serval.CodeGen
         /// </summary>
         public int LineNumber { get; init; } = 0;
 
-        public override string ToString() => (Undefined ? "[UNDEFINED] " : String.Empty) + $"{Type} {Name}";
+        /// <summary>
+        /// Temporary for testing
+        /// </summary>
+        public object Value { get; set; }
+
+        public override string ToString() => (Undefined ? "[UNDEFINED] " : String.Empty) + $"{Usage} '{Name}'";
     }
 }

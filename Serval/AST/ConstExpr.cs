@@ -5,7 +5,7 @@ using Serval.Lexing;
 
 namespace Serval.AST
 {
-    internal class ConstExpr : ExpressionNode
+    public class ConstExpr : ExpressionNode
     {
         public ConstExpr(Token token, Symbol type)
         {

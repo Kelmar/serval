@@ -34,12 +34,12 @@ namespace Serval
                     {
                         Name = m_lex.Current.Literal,
                         Undefined = true,
-                        Type = SymbolType.Variable,
+                        Usage = SymbolUsage.Variable,
                         LineNumber = m_lex.Current.LineNumber
                     });
                 }
 
-                if (sym.Type == SymbolType.Type)
+                if (sym.Usage == SymbolUsage.Type)
                 {
                     // We can't read from a "type" symbol
                     Error(ErrorCodes.ParseTypeNotValidHere, sym);
@@ -134,7 +134,7 @@ namespace Serval
                         {
                             Name = m_lex.Current.Literal,
                             Undefined = true,
-                            Type = SymbolType.Type,
+                            Usage = SymbolUsage.Type,
                             LineNumber = m_lex.Current.LineNumber
                         });
 
@@ -145,7 +145,7 @@ namespace Serval
 
                     Expect(TokenType.RightParen);
                     
-                    if (sym.Type != SymbolType.Type)
+                    if (sym.Usage != SymbolUsage.Type)
                     {
                         Error(ErrorCodes.ParseTypeExpected, op);
                         return new DummyExpr();
@@ -172,7 +172,7 @@ namespace Serval
 
                 // TODO: If type is undefined, then it's probably the start of a lambda.
 
-                if (type?.Type == SymbolType.Type)
+                if (type?.Usage == SymbolUsage.Type)
                 {
                     // Eat '('
                     Expect(TokenType.LeftParen, TokenType.RightParen);
