@@ -174,6 +174,23 @@ namespace Serval
             return rval;
         }
 
+        private StatementNode ParseWhileStatement()
+        {
+            Expect(TokenType.While);
+
+            var rval = new WhileStatement();
+
+            Expect(TokenType.LeftParen);
+
+            rval.Condition = ParseExpression();
+
+            Expect(TokenType.RightParen);
+
+            rval.Body = ParseStatement();
+
+            return rval;
+        }
+
         /// <summary>
         /// statement: [ident] ':' statement
         ///          | expression_statement
@@ -213,6 +230,10 @@ namespace Serval
             case TokenType.Var:
             case TokenType.Const:
                 rval = ParseDeclaration();
+                break;
+
+            case TokenType.While:
+                rval = ParseWhileStatement();
                 break;
 
             default:

@@ -21,10 +21,12 @@
 
         Class           = 0x0000_15_00,
         Const           = 0x0000_15_01,
+        While           = 0x0000_15_02,
 
         SizeOf          = 0x0000_16_00,
         Struct          = 0x0000_16_01,
         TypeOf          = 0x0000_16_02,
+        
 
         // Misc symbols
         At              = '@',

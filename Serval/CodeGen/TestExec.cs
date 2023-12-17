@@ -56,6 +56,10 @@ namespace Serval.CodeGen
                 ExecuteCompoundStatement(compoundStatement);
                 break;
 
+            case WhileStatement whileStatement:
+                ExecuteWhileStatement(whileStatement);
+                break;
+
             case VariableDecl:
                 break; // Nothing really to do right now.
 
@@ -65,6 +69,20 @@ namespace Serval.CodeGen
 
             default:
                 throw new Exception($"Unknown statement type {statement.GetType().Name}");
+            }
+        }
+
+        private void ExecuteWhileStatement(WhileStatement whileStatement)
+        {
+            while (true)
+            {
+                ExecuteExpression(whileStatement.Condition);
+                int r = m_stack.Pop();
+
+                if (r == 0)
+                    break;
+
+                ExecuteStatement(whileStatement.Body);
             }
         }
 
@@ -136,8 +154,8 @@ namespace Serval.CodeGen
             ExecuteExpression(binExpr.Left);
             ExecuteExpression(binExpr.Right);
 
-            int l = m_stack.Pop();
             int r = m_stack.Pop();
+            int l = m_stack.Pop();
 
             var res = binExpr.Operator switch
             {

@@ -21,6 +21,7 @@ namespace Serval.Lexing
                     "var" => TokenType.Var,
                     "class" => TokenType.Class,
                     "const" => TokenType.Const,
+                    "while" => TokenType.While,
                     "sizeof" => TokenType.SizeOf,
                     "struct" => TokenType.Struct,
                     "typeof" => TokenType.TypeOf,
