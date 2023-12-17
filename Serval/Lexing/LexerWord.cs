@@ -22,6 +22,7 @@ namespace Serval.Lexing
                     "class" => TokenType.Class,
                     "const" => TokenType.Const,
                     "while" => TokenType.While,
+                    "import" => TokenType.Import,
                     "public" => TokenType.Public,
                     "sizeof" => TokenType.SizeOf,
                     "struct" => TokenType.Struct,

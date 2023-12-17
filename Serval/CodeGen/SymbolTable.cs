@@ -10,8 +10,16 @@ namespace Serval.CodeGen
 
         private readonly SymbolTable m_parent;
 
+        public SymbolTable()
+        {
+            m_parent = null;
+            InitGlobal();
+        }
+
         public SymbolTable(SymbolTable parent)
         {
+            Debug.Assert(parent != null);
+
             m_parent = parent;
         }
 
@@ -55,7 +63,7 @@ namespace Serval.CodeGen
         /// <summary>
         /// Initializes system built in entries for global symbol table.
         /// </summary>
-        public void InitGlobal()
+        private void InitGlobal()
         {
             Add(new Symbol
             {

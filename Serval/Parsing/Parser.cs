@@ -185,6 +185,10 @@ namespace Serval
                     ParseClass();
                     break;
 
+                case TokenType.Import:
+                    ParseImport();
+                    break;
+
                 default:
                     StatementNode statement = ParseStatement();
 

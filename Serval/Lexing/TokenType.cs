@@ -23,10 +23,11 @@
         Const           = 0x0000_15_01,
         While           = 0x0000_15_02,
 
-        Public          = 0x0000_16_00,
-        SizeOf          = 0x0000_16_01,
-        Struct          = 0x0000_16_02,
-        TypeOf          = 0x0000_16_03,
+        Import          = 0x0000_16_00,
+        Public          = 0x0000_16_01,
+        SizeOf          = 0x0000_16_02,
+        Struct          = 0x0000_16_03,
+        TypeOf          = 0x0000_16_04,
 
         Private         = 0x0000_17_00,
 

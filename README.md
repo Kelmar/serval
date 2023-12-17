@@ -32,3 +32,20 @@ we need to fully form out the syntax of the language to begin work on the next p
 The current major mile stone is to get a bootstrap compiler working in another language.  This is currently C#, but 
 may change depending on requirements in the future.  It is entirely possible this will get replaced with C++ to 
 facilitate better portability across platforms and to better interface with LLVM.
+
+# Example
+This is an example of the current syntax that is working.
+
+```
+import submodule;
+
+class Widget
+{
+    var foo : int;
+}
+
+var bar : Widget;
+var baz : int;
+
+baz = 2 + 5 * 10;
+```

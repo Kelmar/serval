@@ -1,4 +1,6 @@
-﻿const bar : int;
+﻿import submodule;
+
+const bar : int;
 var foo : int;
 
 foo = 5 + 5;

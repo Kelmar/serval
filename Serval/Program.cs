@@ -15,9 +15,7 @@ namespace Serval
         static void Compile(string filename)
         {
             var reporter = new Reporter();
-            var symbolTable = new SymbolTable(null);
-
-            symbolTable.InitGlobal();
+            var symbolTable = new SymbolTable();
 
             using var input = File.OpenRead(filename);
             using var lex = new Lexer(input, reporter);
