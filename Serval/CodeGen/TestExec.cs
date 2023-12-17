@@ -56,6 +56,9 @@ namespace Serval.CodeGen
                 ExecuteCompoundStatement(compoundStatement);
                 break;
 
+            case VariableDecl:
+                break; // Nothing really to do right now.
+
             //case ExpressionStatement exprStatement:
             //    ExecuteExpression(exprStatement.Expression);
             //    break;
