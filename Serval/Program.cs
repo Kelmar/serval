@@ -34,7 +34,7 @@ namespace Serval
                 gen.Execute(module);
             }
 
-            Console.WriteLine("Errors: {0}, Warnings: {1}", reporter.ErrorCount, reporter.WarnCount);
+            reporter.Summary();
         }
 
         static bool ParseArguments(string[] args)

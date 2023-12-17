@@ -10,5 +10,7 @@ namespace Serval
         void Error(int lineNumber, ErrorCodes errorCode, params object[] args);
 
         void Error(Token t, ErrorCodes errorCode, params object[] args);
+
+        void Summary();
     }
 }

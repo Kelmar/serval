@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 using Serval.AST;
@@ -33,27 +34,53 @@ namespace Serval.CodeGen
         {
             Debug.Assert(module != null, "Got NULL AST list!?");
 
-            foreach (var expr in module.Expressions)
+            foreach (var statement in module.Statements)
             {
-                Execute(expr);
-                //var value = Generate(expr);
+                ExecuteStatement(statement);
             }
         }
 
-        private void Execute(ExpressionNode expression)
+        private void ExecuteStatement(StatementNode statement)
         {
-            switch (expression)
+            switch (statement)
             {
-            case AssignmentStatement assign:
-                ExecuteAssignment(assign);
+            case AssignmentExpression assignStatement:
+                ExecuteAssignment(assignStatement);
                 break;
 
+            case LabeledStatement labelStatement:
+                ExecuteStatement(labelStatement.Next);
+                break;
+
+            case CompoundStatement compoundStatement:
+                ExecuteCompoundStatement(compoundStatement);
+                break;
+
+            case ExpressionStatement exprStatement:
+                ExecuteExpression(exprStatement.Expression);
+                break;
+
+            default:
+                throw new Exception($"Unknown statement type {statement.GetType().Name}");
+            }
+        }
+
+        private void ExecuteCompoundStatement(CompoundStatement compound)
+        {
+            foreach (var statement in compound.Statements)
+                ExecuteStatement(statement);
+        }
+
+        private void ExecuteExpression(ExpressionNode expression)
+        { 
+            switch (expression)
+            { 
             case UnaryExpr unaryExpr:
                 ExecuteUna(unaryExpr);
                 break;
 
             case CastExpr castExpr:
-                Execute(castExpr.Right); // Do nothing for now
+                ExecuteExpression(castExpr.Right); // Do nothing for now
                 break;
 
             case BinaryExpr binExpr:
@@ -67,12 +94,15 @@ namespace Serval.CodeGen
             case ConstExpr constExpr:
                 ExecuteConst(constExpr);
                 break;
+
+            default:
+                throw new Exception($"Unknown expression type {expression.GetType().Name}");
             }
         }
 
-        private void ExecuteAssignment(AssignmentStatement assign)
+        private void ExecuteAssignment(AssignmentExpression assign)
         {
-            Execute(assign.Expression);
+            ExecuteExpression(assign.Expression);
 
             assign.Identifier.Value = m_stack.Pop();
 
@@ -81,7 +111,7 @@ namespace Serval.CodeGen
 
         private void ExecuteUna(UnaryExpr unaryExpr)
         {
-            Execute(unaryExpr.Right);
+            ExecuteExpression(unaryExpr.Right);
 
             int r = m_stack.Pop();
             int res = unaryExpr.Operator switch
@@ -100,8 +130,8 @@ namespace Serval.CodeGen
 
         private void ExecuteBin(BinaryExpr binExpr)
         {
-            Execute(binExpr.Left);
-            Execute(binExpr.Right);
+            ExecuteExpression(binExpr.Left);
+            ExecuteExpression(binExpr.Right);
 
             int l = m_stack.Pop();
             int r = m_stack.Pop();

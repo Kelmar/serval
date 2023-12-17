@@ -3,9 +3,12 @@ using Serval.Lexing;
 
 namespace Serval.AST
 {
-    public class TypeExpr : ExpressionNode
+    /// <summary>
+    /// Type operator: typeof, sizeof
+    /// </summary>
+    public class TypeOpExpr : ExpressionNode
     {
-        public TypeExpr(TokenType op, Symbol type)
+        public TypeOpExpr(TokenType op, Symbol type)
         {
             Operator = op;
             Type = type;

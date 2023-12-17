@@ -6,13 +6,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="test.svl" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="test.svl">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <None Update="TestFiles\test.svl">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

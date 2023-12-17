@@ -3,7 +3,7 @@ using Serval.Lexing;
 
 namespace Serval.AST
 {
-    public class VariableDecl : ExpressionNode
+    public class VariableDecl : StatementNode
     {
         public VariableDecl(TokenType modifier, Symbol type, Symbol ident)
         {

@@ -105,97 +105,7 @@ namespace Serval
             return rval;
         }
 
-        /// <summary>
-        /// assignment: [ident] '=' expression
-        /// </summary>
-        /// <returns></returns>
-        private ExpressionNode ParseAssignment()
-        {
-            if (m_lex.Current.Type != TokenType.Identifier)
-            {
-                Error(ErrorCodes.ParseExpectedSymbol, m_lex.Current, TokenType.Identifier);
-                Resync(TokenType.Semicolon);
-                return null;
-            }
-
-            Token ident = m_lex.Current;
-            m_lex.MoveNext();
-
-            Symbol symbol = m_symbolTable.Find(ident.Literal);
-
-            if (symbol == null)
-            {
-                Error(ErrorCodes.ParseUndeclaredVar, ident);
-
-                symbol = m_symbolTable.Add(new Symbol()
-                {
-                    Name = ident.Literal,
-                    Usage = SymbolUsage.Variable,
-                    Undefined = true,
-                    LineNumber = ident.LineNumber
-                });
-            }
-
-            if (symbol.Usage != SymbolUsage.Variable)
-                Error(ErrorCodes.ParseAssignToNonVar, symbol);
-
-            Expect(TokenType.Assign);
-
-            ExpressionNode rval = new AssignmentStatement(symbol, ParseExpression());
-
-            return rval;
-        }
-
-        /// <summary>
-        /// declaration: "var" [ident] ":" [type]
-        ///            | "const" [ident] ":" [type]
-        /// </summary>
-        /// <returns></returns>
-        private ExpressionNode ParseDeclaration()
-        {
-            TokenType mod = m_lex.Current.Type;
-            m_lex.MoveNext();
-
-            if (m_lex.Current.Type != TokenType.Identifier)
-            {
-                Error(ErrorCodes.ParseExpectedSymbol, m_lex.Current, TokenType.Identifier);
-                return null;
-            }
-
-            Token ident = m_lex.Current;
-            m_lex.MoveNext();
-
-            Expect(TokenType.Colon);
-
-            var type = m_symbolTable.Find(m_lex.Current.Literal);
-
-            if (type == null || type.Usage != SymbolUsage.Type)
-            {
-                Error(ErrorCodes.ParseExpectedSymbol, m_lex.Current, SemanticType.TypeDeclaration);
-                return null;
-            }
-
-            m_lex.MoveNext();
-
-            Symbol sym = m_symbolTable.Find(ident.Literal);
-
-            if (sym != null)
-            {
-                Error(ErrorCodes.ParseAlreadyDefined, sym);
-                return null;
-            }
-
-            sym = m_symbolTable.Add(new Symbol
-            {
-                Name = ident.Literal,
-                Usage = mod == TokenType.Const ? SymbolUsage.Constant : SymbolUsage.Variable,
-                LineNumber = ident.LineNumber
-            });
-
-            // TODO: Look for optional assignment for variable initializer.
-
-            return new VariableDecl(mod, type, sym);
-        }
+        
 
         /// <summary>
         /// call_argument: expression
@@ -237,64 +147,31 @@ namespace Serval
         /// function_call: identifier '(' parameter_list ')'
         /// </summary>
         /// <returns></returns>
-        private ExpressionNode ParseFunctionCall()
-        {
-            Token ident = m_lex.Current;
-            m_lex.MoveNext();
+        //private ExpressionNode ParseFunctionCall()
+        //{
+        //    Token ident = m_lex.Current;
+        //    m_lex.MoveNext();
 
-            // Eat '('
-            Expect(TokenType.LeftParen, TokenType.RightParen);
+        //    // Eat '('
+        //    Expect(TokenType.LeftParen, TokenType.RightParen);
 
-            var args = ParseParameterList();
+        //    var args = ParseParameterList();
 
-            // Eat ')'
-            Expect(TokenType.RightParen);
+        //    // Eat ')'
+        //    Expect(TokenType.RightParen);
 
-            return new FunctionCallExpr(ident.Literal, args);
-        }
+        //    return new FunctionCallExpr(ident.Literal, args);
+        //}
 
-        private ExpressionNode ParseFunctionOrAssignment()
-        {
-            return m_lex.LookAhead.Type switch
-            {
-                TokenType.Assign => ParseAssignment(),
-                TokenType.LeftParen => ParseFunctionCall(),
-                _ => null,
-            };
-        }
-
-        /// <summary>
-        /// statement: assignment ';'
-        ///          | function_call ';'
-        ///          | declaration ';'
-        /// </summary>
-        /// <returns></returns>
-        private ExpressionNode ParseStatement()
-        {
-            ExpressionNode rval;
-
-            switch (m_lex.Current.Type)
-            {
-            case TokenType.Identifier:
-                rval = ParseFunctionOrAssignment();
-                break;
-
-            case TokenType.Var:
-            case TokenType.Const:
-                rval = ParseDeclaration();
-                break;
-
-            default:
-                Error(ErrorCodes.ParseUnexpectedSymbol, m_lex.Current);
-                Resync(TokenType.Semicolon);
-                return null;
-            }
-
-            if (!Expect(TokenType.Semicolon))
-                return null;
-
-            return rval;
-        }
+        //private StatementNode ParseFunctionOrAssignment()
+        //{
+        //    return m_lex.LookAhead.Type switch
+        //    {
+        //        TokenType.Assign => ParseAssignment(),
+        //        //TokenType.LeftParen => ParseFunctionCall(),
+        //        _ => null,
+        //    };
+        //}
 
         public Module ParseModule()
         {
@@ -302,10 +179,10 @@ namespace Serval
 
             while (m_lex.Current.Type != TokenType.EndOfFile)
             {
-                ExpressionNode expr = ParseStatement();
+                StatementNode statement = ParseStatement();
 
-                if (expr != null)
-                    rval.Expressions.Add(expr);
+                if (statement != null)
+                    rval.Statements.Add(statement);
             }
 
             return rval;

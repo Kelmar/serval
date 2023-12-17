@@ -6,6 +6,6 @@ namespace Serval.AST
 {
     public abstract class BodyExpression : ExpressionNode
     {
-        public List<ExpressionNode> Expressions { get; } = new List<ExpressionNode>();
+        public List<StatementNode> Statements { get; } = new List<StatementNode>();
     }
 }

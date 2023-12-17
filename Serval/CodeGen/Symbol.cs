@@ -17,7 +17,11 @@ namespace Serval.CodeGen
         /// <summary>
         /// Set if this was an undefined symbol.
         /// </summary>
-        public bool Undefined { get; init; } = false;
+        /// <remarks>
+        /// We allow this to change for things like labels where a goto 
+        /// might appear before the label is defined, which is valid.
+        /// </remarks>
+        public bool Undefined { get; set; } = false;
 
         /// <summary>
         /// Set if this is an internally defined symbol by the compiler.

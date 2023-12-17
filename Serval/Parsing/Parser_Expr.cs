@@ -151,7 +151,7 @@ namespace Serval
                         return new DummyExpr();
                     }
 
-                    return new TypeExpr(op, sym);
+                    return new TypeOpExpr(op, sym);
                 }
 
             default:
@@ -276,6 +276,44 @@ namespace Serval
         private ExpressionNode ParseEquality()
         {
             return ParseBinary(ParseRelational, "==", "!=");
+        }
+
+        /// <summary>
+        /// assignment: [ident] '=' expression
+        /// </summary>
+        /// <returns></returns>
+        private ExpressionNode ParseAssignment()
+        {
+            if (m_lex.Current.Type != TokenType.Identifier)
+            {
+                Error(ErrorCodes.ParseExpectedSymbol, m_lex.Current, TokenType.Identifier);
+                Resync(TokenType.Semicolon);
+                return null;
+            }
+
+            var target = ParseUnary();
+
+            //Symbol symbol = m_symbolTable.Find(ident.Literal);
+
+            //if (symbol == null)
+            //{
+            //    Error(ErrorCodes.ParseUndeclaredVar, ident);
+
+            //    symbol = m_symbolTable.Add(new Symbol()
+            //    {
+            //        Name = ident.Literal,
+            //        Usage = SymbolUsage.Variable,
+            //        Undefined = true,
+            //        LineNumber = ident.LineNumber
+            //    });
+            //}
+
+            //if (symbol.Usage != SymbolUsage.Variable)
+            //    Error(ErrorCodes.ParseAssignToNonVar, symbol);
+
+            Expect(TokenType.Assign);
+
+            return new AssignmentExpression(target, ParseExpression());
         }
 
         /// <summary>

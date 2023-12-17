@@ -1,0 +1,16 @@
+﻿const bar : int;
+var foo : int;
+foo = 5 + 5;
+
+//bar = foo;
+//int = 3;
+
+var baz : int;
+
+baz = !!!!foo;
+baz = 10 + 5 * 2;
+
+//foo = sizeof(int);
+//bar = sizeof(foo);
+
+doThing(foo, bar);

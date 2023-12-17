@@ -2,7 +2,7 @@
   "profiles": {
     "Serval": {
       "commandName": "Project",
-      "commandLineArgs": "test.svl"
+      "commandLineArgs": "../../../TestFiles/test.svl"
     }
   }
 }

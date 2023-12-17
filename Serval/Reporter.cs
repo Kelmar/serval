@@ -110,5 +110,10 @@ namespace Serval
         {
             Error(t.LineNumber, errorCode, args);
         }
+
+        public void Summary()
+        {
+            Console.WriteLine("Errors: {0}, Warnings: {1}", ErrorCount, WarnCount);
+        }
     }
 }
