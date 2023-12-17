@@ -38,6 +38,7 @@ namespace Serval
                 ErrorCodes.ParseTypeNotValidHere => "'{0}' is a type, which is not valid in this context",
                 ErrorCodes.ParseTypeExpected => "Type expected for {0} operator",
                 ErrorCodes.ParseTypeUndefined => "Type '{0}' not defined",
+                ErrorCodes.ParseNotLabel => "Identifier '{0}' is not a valid label.",
 
                 ErrorCodes.ParseUnknownError => "BUG: Unknown parsing error",
 

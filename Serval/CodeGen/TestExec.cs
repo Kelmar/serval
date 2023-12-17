@@ -44,7 +44,7 @@ namespace Serval.CodeGen
         {
             switch (statement)
             {
-            case AssignmentExpression assignStatement:
+            case AssignmentStatement assignStatement:
                 ExecuteAssignment(assignStatement);
                 break;
 
@@ -56,9 +56,9 @@ namespace Serval.CodeGen
                 ExecuteCompoundStatement(compoundStatement);
                 break;
 
-            case ExpressionStatement exprStatement:
-                ExecuteExpression(exprStatement.Expression);
-                break;
+            //case ExpressionStatement exprStatement:
+            //    ExecuteExpression(exprStatement.Expression);
+            //    break;
 
             default:
                 throw new Exception($"Unknown statement type {statement.GetType().Name}");
@@ -100,13 +100,13 @@ namespace Serval.CodeGen
             }
         }
 
-        private void ExecuteAssignment(AssignmentExpression assign)
+        private void ExecuteAssignment(AssignmentStatement assign)
         {
             ExecuteExpression(assign.Expression);
 
-            assign.Identifier.Value = m_stack.Pop();
+            assign.Target.Value = m_stack.Pop();
 
-            Console.WriteLine("{0} => {1}", assign.Identifier.Name, assign.Identifier.Value);
+            Console.WriteLine("{0} => {1}", assign.Target.Name, assign.Target.Value);
         }
 
         private void ExecuteUna(UnaryExpr unaryExpr)

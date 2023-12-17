@@ -31,7 +31,7 @@ namespace Serval.CodeGen
         /// <summary>
         /// The line number this symbol was declared on (0 for no line)
         /// </summary>
-        public int LineNumber { get; init; } = 0;
+        public int LineNumber { get; set; } = 0;
 
         /// <summary>
         /// Temporary for testing

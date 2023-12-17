@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Serval.AST
 {
-    public class Module : BodyExpression
+    public class Module : CompoundStatement
     {
     }
 }

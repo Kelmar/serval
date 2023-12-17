@@ -4,9 +4,9 @@ using System.Text;
 
 namespace Serval.AST
 {
-    public class FunctionCallExpr : ExpressionNode
+    public class FunctionCallExpr : StatementNode
     {
-        public FunctionCallExpr(string name, List<ExpressionNode> arguments)
+        public FunctionCallExpr(string name, List<StatementNode> arguments)
         {
             FunctionName = name;
             Arguments = arguments;
@@ -14,6 +14,6 @@ namespace Serval.AST
 
         public string FunctionName { get; }
 
-        public List<ExpressionNode> Arguments { get; }
+        public List<StatementNode> Arguments { get; }
     }
 }

@@ -32,6 +32,7 @@ namespace Serval.Fault
         ParseTypeNotValidHere   = 2007,
         ParseTypeExpected       = 2008,
         ParseTypeUndefined      = 2009,
+        ParseNotLabel           = 2010,
 
         ParseUnknownError       = 2999,
     }

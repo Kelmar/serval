@@ -60,14 +60,14 @@ namespace Serval
             return new VariableDecl(mod, type, sym);
         }
 
-        private StatementNode ParseExpressionStatement()
-        {
-            var rval = new ExpressionStatement(ParseExpression());
+        //private StatementNode ParseExpressionStatement()
+        //{
+        //    var rval = new ExpressionStatement(ParseExpression());
 
-            Expect(TokenType.Semicolon);
+        //    Expect(TokenType.Semicolon);
 
-            return rval;
-        }
+        //    return rval;
+        //}
 
         private StatementNode ParseLabeledStatement()
         {
@@ -80,7 +80,20 @@ namespace Serval
             Symbol sym = m_symbolTable.Find(ident.Literal);
 
             if (sym != null)
-                Error(ErrorCodes.ParseAlreadyDefined, sym);
+            {
+                if (sym.Usage != SymbolUsage.Label)
+                    Error(ErrorCodes.ParseNotLabel, sym);
+                else
+                {
+                    // We could get a goto for a label that is not yet defined, that's okay.
+
+                    if (!sym.Undefined)
+                        Error(ErrorCodes.ParseAlreadyDefined, sym);
+
+                    sym.Undefined = false;
+                    sym.LineNumber = ident.LineNumber;
+                }
+            }
             else
             {
                 sym = m_symbolTable.Add(new Symbol
@@ -94,6 +107,46 @@ namespace Serval
             return new LabeledStatement(sym, ParseStatement());
         }
 
+        /// <summary>
+        /// assignment: [ident] '=' expression
+        /// </summary>
+        /// <returns></returns>
+        private StatementNode ParseAssignmentStatement()
+        {
+            if (m_lex.Current.Type != TokenType.Identifier)
+            {
+                Error(ErrorCodes.ParseExpectedSymbol, m_lex.Current, TokenType.Identifier);
+                Resync(TokenType.Semicolon);
+                return null;
+            }
+
+            //var target = ParseUnary();
+
+            var ident = m_lex.Current;
+            m_lex.MoveNext();
+
+            Symbol symbol = m_symbolTable.Find(ident.Literal);
+
+            if (symbol == null)
+            {
+                Error(ErrorCodes.ParseUndeclaredVar, ident);
+
+                symbol = m_symbolTable.Add(new Symbol()
+                {
+                    Name = ident.Literal,
+                    Usage = SymbolUsage.Variable,
+                    Undefined = true,
+                    LineNumber = ident.LineNumber
+                });
+            }
+
+            if (symbol.Usage != SymbolUsage.Variable)
+                Error(ErrorCodes.ParseAssignToNonVar, symbol);
+
+            Expect(TokenType.Assign);
+
+            return new AssignmentStatement(symbol, ParseExpression());
+        }
 
         /// <summary>
         /// compound_statement: '{' '}'
@@ -135,13 +188,22 @@ namespace Serval
             switch (m_lex.Current.Type)
             {
             case TokenType.Semicolon:
+                m_lex.MoveNext();
                 break; // Empty statement okay
 
             case TokenType.Identifier:
-                if (m_lex.LookAhead.Type == TokenType.Colon)
+                switch (m_lex.LookAhead.Type)
+                {
+                case TokenType.Colon:
                     rval = ParseLabeledStatement();
-                else
-                    rval = ParseExpressionStatement();
+                    Expect(TokenType.Semicolon);
+                    break;
+
+                case TokenType.Assign:
+                    rval = ParseAssignmentStatement();
+                    Expect(TokenType.Semicolon);
+                    break;
+                }
                 break;
 
             case TokenType.LeftCurl:

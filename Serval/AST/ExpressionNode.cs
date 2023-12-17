@@ -1,6 +1,6 @@
 ﻿namespace Serval.AST
 {
-    public abstract class ExpressionNode : Node
+    public class ExpressionNode : Node
     {
     }
 }

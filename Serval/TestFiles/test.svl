@@ -13,4 +13,4 @@ baz = 10 + 5 * 2;
 //foo = sizeof(int);
 //bar = sizeof(foo);
 
-doThing(foo, bar);
+//doThing(foo, bar);
