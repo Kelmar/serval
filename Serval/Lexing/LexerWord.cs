@@ -22,9 +22,12 @@ namespace Serval.Lexing
                     "class" => TokenType.Class,
                     "const" => TokenType.Const,
                     "while" => TokenType.While,
+                    "public" => TokenType.Public,
                     "sizeof" => TokenType.SizeOf,
                     "struct" => TokenType.Struct,
                     "typeof" => TokenType.TypeOf,
+                    "private" => TokenType.Private,
+                    "protected" => TokenType.Protected,
                     _ => TokenType.Identifier
                 }, m_lineNumber, start, m_linePos);
             }

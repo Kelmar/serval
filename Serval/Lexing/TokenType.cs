@@ -23,10 +23,14 @@
         Const           = 0x0000_15_01,
         While           = 0x0000_15_02,
 
-        SizeOf          = 0x0000_16_00,
-        Struct          = 0x0000_16_01,
-        TypeOf          = 0x0000_16_02,
-        
+        Public          = 0x0000_16_00,
+        SizeOf          = 0x0000_16_01,
+        Struct          = 0x0000_16_02,
+        TypeOf          = 0x0000_16_03,
+
+        Private         = 0x0000_17_00,
+
+        Protected       = 0x0000_19_00,
 
         // Misc symbols
         At              = '@',

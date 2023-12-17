@@ -179,10 +179,19 @@ namespace Serval
 
             while (m_lex.Current.Type != TokenType.EndOfFile)
             {
-                StatementNode statement = ParseStatement();
+                switch (m_lex.Current.Type)
+                {
+                case TokenType.Class:
+                    ParseClass();
+                    break;
 
-                if (statement != null)
-                    rval.Statements.Add(statement);
+                default:
+                    StatementNode statement = ParseStatement();
+
+                    if (statement != null)
+                        rval.Statements.Add(statement);
+                    break;
+                }
             }
 
             return rval;

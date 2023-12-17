@@ -15,6 +15,11 @@ namespace Serval.CodeGen
         public SymbolUsage Usage { get; init; }
 
         /// <summary>
+        /// The declared type of the symbol
+        /// </summary>
+        public Symbol Type { get; init; }
+
+        /// <summary>
         /// Set if this was an undefined symbol.
         /// </summary>
         /// <remarks>

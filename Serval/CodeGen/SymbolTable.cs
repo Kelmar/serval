@@ -8,6 +8,13 @@ namespace Serval.CodeGen
     {
         private readonly Dictionary<string, Symbol> m_entries = [];
 
+        private readonly SymbolTable m_parent;
+
+        public SymbolTable(SymbolTable parent)
+        {
+            m_parent = parent;
+        }
+
         /// <summary>
         /// Add a new entry to the symbol table.
         /// </summary>
@@ -32,11 +39,15 @@ namespace Serval.CodeGen
         /// Look for a symbol table entry
         /// </summary>
         /// <param name="name">The name of the symbol to look for.</param>
+        /// <param name="localOnly">Set if the search should only include local symbols.</param>
         /// <returns>The symbol if found, null if not.</returns>
-        public Symbol Find(string name)
+        public Symbol Find(string name, bool localOnly = false)
         {
             if (m_entries.TryGetValue(name, out Symbol rval))
                 return rval;
+
+            if (!localOnly && m_parent != null)
+                return m_parent.Find(name, localOnly);
 
             return null;
         }

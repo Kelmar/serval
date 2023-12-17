@@ -15,7 +15,7 @@ namespace Serval
         static void Compile(string filename)
         {
             var reporter = new Reporter();
-            var symbolTable = new SymbolTable();
+            var symbolTable = new SymbolTable(null);
 
             symbolTable.InitGlobal();
 

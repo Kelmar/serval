@@ -12,7 +12,7 @@ namespace Serval
         ///            | "const" [ident] ":" [ident] ';'
         /// </summary>
         /// <returns></returns>
-        private StatementNode ParseDeclaration()
+        private StatementNode ParseDeclaration(SymbolTable local)
         {
             TokenType mod = m_lex.Current.Type;
             m_lex.MoveNext();
@@ -38,19 +38,20 @@ namespace Serval
 
             m_lex.MoveNext();
 
-            Symbol sym = m_symbolTable.Find(ident.Literal);
+            Symbol sym = local.Find(ident.Literal);
 
             if (sym != null)
             {
-                Error(ErrorCodes.ParseAlreadyDefined, sym);
+                Error(ErrorCodes.ParseAlreadyDefined, sym, sym.LineNumber);
                 return null;
             }
 
-            sym = m_symbolTable.Add(new Symbol
+            sym = local.Add(new Symbol
             {
                 Name = ident.Literal,
                 Usage = mod == TokenType.Const ? SymbolUsage.Constant : SymbolUsage.Variable,
-                LineNumber = ident.LineNumber
+                LineNumber = ident.LineNumber,
+                Type = type
             });
 
             // TODO: Look for optional assignment for variable initializer.
@@ -229,7 +230,7 @@ namespace Serval
 
             case TokenType.Var:
             case TokenType.Const:
-                rval = ParseDeclaration();
+                rval = ParseDeclaration(m_symbolTable);
                 break;
 
             case TokenType.While:
