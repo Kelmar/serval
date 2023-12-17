@@ -1,4 +1,4 @@
-This is currently an experiamental language that I'm developing.  That may change in the future.
+This is currently an experimental language that I'm developing.  That may change in the future.
 
 # Goals
 ## Syntax
@@ -9,8 +9,8 @@ we need to fully form out the syntax of the language to begin work on the next p
 ## Language
 * C/C++/C# like syntax
 * Easy to interface with hardware at a low level (OS/Driver Development)
-  * Pointers & Refrences
-  * Pointer arithmatic
+  * Pointers & References
+  * Pointer arithmetic
   * Structure bit layouts
 * Easy to interface with C/C++ (Not sure how yet)
 * Stack based objects
@@ -20,7 +20,7 @@ we need to fully form out the syntax of the language to begin work on the next p
 * Generics (not templates)
 * Interfaces
 * Strongly typed
-* Const correctness like C++ (readonly objects checked at compile time)
+* Const correctness like C++ (read only objects checked at compile time)
 * Operator overloading
 * Async programming (user space threads (i.e. C# tasks))
 
