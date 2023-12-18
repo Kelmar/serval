@@ -19,6 +19,8 @@ namespace Serval.Lexing
                     "_" => TokenType.Discard,
                     "for" => TokenType.For,
                     "var" => TokenType.Var,
+                    "enum" => TokenType.Enum,
+                    "func" => TokenType.Func,
                     "class" => TokenType.Class,
                     "const" => TokenType.Const,
                     "while" => TokenType.While,

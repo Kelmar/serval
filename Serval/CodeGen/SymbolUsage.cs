@@ -20,6 +20,11 @@
         /// <summary>
         /// Symbol was declared as a type (immutable)
         /// </summary>
-        Type      = 4
+        Type      = 4,
+
+        /// <summary>
+        /// For defined functions, we can't write back to them.
+        /// </summary>
+        Function  = 5,
     }
 }

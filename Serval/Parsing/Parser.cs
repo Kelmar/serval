@@ -173,6 +173,116 @@ namespace Serval
         //    };
         //}
 
+        private void ParseEnum()
+        {
+            Expect(TokenType.Enum);
+
+            var ident = m_lex.Current;
+            bool valid = true;
+
+            string name = ident.Literal;
+            Symbol sym;
+
+            if (!Expect(TokenType.Identifier))
+            {
+                valid = false;
+                name = m_symbolTable.GenName();
+            }
+            else
+            {
+                sym = m_symbolTable.Find(ident.Literal);
+
+                if (sym != null)
+                {
+                    Error(ErrorCodes.ParseAlreadyDefined, sym, sym.LineNumber);
+                    return;
+                }
+            }
+
+            var typeDef = new TypeDecl(TypeType.Enum, name, m_symbolTable);
+
+            var itemValues = new HashSet<int>();
+            int lastValue = 0;
+
+            valid &= Expect(TokenType.LeftCurl);
+
+            while (m_lex.Current.Type != TokenType.RightCurl)
+            {
+                var item = m_lex.Current;
+                m_lex.MoveNext();
+
+                if (item.Type != TokenType.Identifier)
+                { 
+                    valid = false;
+                    Resync(TokenType.Comma);
+                    continue;
+                }
+
+                sym = typeDef.Members.Find(item.Literal);
+
+                if (sym != null)
+                {
+                    valid = false;
+                    Error(ErrorCodes.ParseAlreadyDefined, sym, sym.LineNumber);
+                    continue;
+                }
+
+                // Check for user assigned value
+                if (m_lex.Current.Type == TokenType.Assign)
+                {
+                    // Assigned value
+                    m_lex.MoveNext();
+
+                    var value = m_lex.Current;
+                    m_lex.MoveNext();
+
+                    if (value.Type != TokenType.IntConst)
+                    {
+                        Error(ErrorCodes.ParseExpectedSymbol, value, TokenType.IntConst);
+                        Resync(TokenType.Comma);
+                        valid = false;
+                    }
+                    else
+                    {
+                        lastValue = (int)value.Parsed;
+                    }
+                }
+                else
+                {
+                    while (itemValues.Contains(lastValue))
+                        ++lastValue;
+                }
+
+                itemValues.Add(lastValue);
+
+                sym = new Symbol
+                {
+                    Name = item.Literal,
+                    Usage = SymbolUsage.Constant,
+                    LineNumber = item.LineNumber,
+                    Value = lastValue
+                };
+
+                typeDef.Members.Add(sym);
+
+                if (m_lex.Current.Type == TokenType.RightCurl)
+                    break;
+
+                valid &= Expect(TokenType.Comma);
+            }
+
+            valid &= Expect(TokenType.RightCurl);
+
+            m_symbolTable.Add(new Symbol
+            {
+                Name = name,
+                Usage = SymbolUsage.Type,
+                LineNumber = ident.LineNumber,
+                TypeDefinition = typeDef,
+                Valid = valid
+            });
+        }
+
         public Module ParseModule()
         {
             var rval = new Module();
@@ -187,6 +297,10 @@ namespace Serval
 
                 case TokenType.Import:
                     ParseImport();
+                    break;
+
+                case TokenType.Enum:
+                    ParseEnum();
                     break;
 
                 default:

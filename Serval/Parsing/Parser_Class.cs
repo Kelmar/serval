@@ -1,4 +1,5 @@
 ﻿using Serval.CodeGen;
+using Serval.Fault;
 using Serval.Lexing;
 
 namespace Serval
@@ -13,6 +14,15 @@ namespace Serval
             case TokenType.Var:
                 ParseDeclaration(type.Members);
                 break;
+
+            //case TokenType.Func:
+                //ParseFunction();
+                //break;
+
+            default:
+                Error(ErrorCodes.ParseUnexpectedSymbol, m_lex.Current);
+                Resync(TokenType.Semicolon, TokenType.RightCurl);
+                break;
             }
         }
 
@@ -21,28 +31,44 @@ namespace Serval
             Expect(TokenType.Class);
 
             var ident = m_lex.Current;
+            bool valid = true;
+
+            string name = ident.Literal;
 
             if (!Expect(TokenType.Identifier))
-                return;
+            {
+                valid = false;
+                name = m_symbolTable.GenName();
+            }
+            else
+            {
+                var sym = m_symbolTable.Find(name);
 
-            var type = new TypeDecl(ident.Literal, m_symbolTable);
+                if (sym != null)
+                {
+                    Error(ErrorCodes.ParseAlreadyDefined, sym, sym.LineNumber);
+                    valid = false;
+                }
+            }
 
-            if (!Expect(TokenType.LeftCurl))
-                return;
+            var typeDef = new TypeDecl(TypeType.Class, ident.Literal, m_symbolTable);
+
+            valid &= Expect(TokenType.LeftCurl);
 
             while (m_lex.Current.Type != TokenType.RightCurl)
             {
-                ParseClassItem(type);
+                ParseClassItem(typeDef);
             }
 
-            if (!Expect(TokenType.RightCurl))
-                return;
+            valid &= Expect(TokenType.RightCurl);
 
             m_symbolTable.Add(new Symbol
             {
-                Name = ident.Literal,
+                Name = name,
                 Usage = SymbolUsage.Type,
-                LineNumber = ident.LineNumber
+                LineNumber = ident.LineNumber,
+                TypeDefinition = typeDef,
+                Valid = valid
             });
         }
     }

@@ -1,18 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Serval.CodeGen
+﻿namespace Serval.CodeGen
 {
     public class TypeDecl
     {
-        public TypeDecl(string name, SymbolTable parent)
+        public TypeDecl(TypeType type, string name, SymbolTable parent)
         {
+            Type = type;
             Name = name;
             Members = new SymbolTable(parent);
         }
+
+        public TypeType Type { get; }
 
         public string Name { get; }
 

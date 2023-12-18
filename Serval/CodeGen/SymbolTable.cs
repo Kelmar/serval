@@ -10,6 +10,8 @@ namespace Serval.CodeGen
 
         private readonly SymbolTable m_parent;
 
+        private int m_unique = 0;
+
         public SymbolTable()
         {
             m_parent = null;
@@ -21,6 +23,32 @@ namespace Serval.CodeGen
             Debug.Assert(parent != null);
 
             m_parent = parent;
+        }
+
+        /// <summary>
+        /// Generate a name for the compiler to use.
+        /// </summary>
+        /// <returns></returns>
+        public string GenName()
+        {
+            string superName;
+
+            do
+            {
+                if (m_parent != null)
+                {
+                    superName = m_parent.GenName();
+                    superName += "_" + m_unique;
+                }
+                else
+                    superName = "__ANON_" + m_unique;
+
+                ++m_unique;
+
+                // Probably overkill to check this, but let's be safe.
+            } while (m_entries.ContainsKey(superName));
+
+            return superName;
         }
 
         /// <summary>

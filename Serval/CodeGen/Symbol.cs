@@ -20,6 +20,14 @@ namespace Serval.CodeGen
         public Symbol Type { get; init; }
 
         /// <summary>
+        /// Information about the declared type
+        /// </summary>
+        /// <remarks>
+        /// Only valid if Usage == SymbolUsage.Type
+        /// </remarks>
+        public TypeDecl TypeDefinition { get; set; }
+
+        /// <summary>
         /// Set if this was an undefined symbol.
         /// </summary>
         /// <remarks>
@@ -27,6 +35,11 @@ namespace Serval.CodeGen
         /// might appear before the label is defined, which is valid.
         /// </remarks>
         public bool Undefined { get; set; } = false;
+
+        /// <summary>
+        /// Set if the symbol was validly defined.
+        /// </summary>
+        public bool Valid { get; set; } = true;
 
         /// <summary>
         /// Set if this is an internally defined symbol by the compiler.

@@ -25,6 +25,14 @@ class Widget
 
 var w : Widget;
 
+enum Things
+{
+    Thing1 = 5,
+    Thing2 = 10
+}
+
+var t : Things;
+
 //foo = sizeof(int);
 //bar = sizeof(foo);
 
