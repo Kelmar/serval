@@ -239,7 +239,7 @@ namespace Serval
                     if (value.Type != TokenType.IntConst)
                     {
                         Error(ErrorCodes.ParseExpectedSymbol, value, TokenType.IntConst);
-                        Resync(TokenType.Comma);
+                        Resync(TokenType.Comma, TokenType.RightCurl);
                         valid = false;
                     }
                     else
