@@ -1,3 +1,9 @@
+# Moved
+Have a new name for the project, and have shifted development over to C++ for the bootstrap compiler.
+You can find the new project at [OrangeSoda](https://github.com/Kelmar/OrangeSoda)
+
+# Old
+
 This is currently an experimental language that I'm developing.  That may change in the future.
 
 # Goals
